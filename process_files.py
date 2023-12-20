@@ -49,8 +49,8 @@ obs_param = {
     'H2CO': {'freq': 72837.94800, 'vel_ext': '-35 45', 'vel_win':'-5 20'},
     'HC3N_72': {'freq': 72783.82200, 'vel_ext': '-35 45', 'vel_win':'0 15'},
     'HC3N_91': {'freq': 90979.02300, 'vel_ext': '-35 45', 'vel_win':'0 15'},
-    'N2Dp': {'freq': 77109.24330, 'vel_ext': '-35 45', 'vel_win':'-5 -2 3 9 11 17'},
-    'N2Hp': {'freq': 93173.39770, 'vel_ext': '-35 45', 'vel_win':'-4 1 2.5 9.5 10 15'},
+    'N2Dp': {'freq': 77109.24330, 'vel_ext': '5 95', 'vel_win':'31 37 41 56'},
+    'N2Hp': {'freq': 93173.39770, 'vel_ext': '5 95', 'vel_win':'30 58'},
     'SO2': {'freq': 72758.24340, 'vel_ext': '-35 45', 'vel_win':'0 15'},
     'SiO': {'freq': 86846.96, 'vel_ext': '-70 95', 'vel_win':'-10 40'},
     'SO': {'freq': 86093.95000, 'vel_ext': '-70 95', 'vel_win':'-10 40'},
@@ -63,53 +63,41 @@ obs_param = {
     'CH3OH_76.5': {'freq': 76509.684, 'vel_ext': '-35 45', 'vel_win':'5 10'},
     'CH3OH_92.4': {'freq': 92409.490, 'vel_ext': '-35 45', 'vel_win':'5 10'},
     }
-#lines = ['DCOp', 'HCOp', 'H13COp', 'HCN', 'DCN', 'H13CN', 'HC15N',
-#         'DNC', 'HNC', 'H2CO', #'CCH_873_b'] #
-#         'HC3N_72', 'HC3N_91', 'N2Dp', 'N2Hp', 'SO2']
-#lines = ['CH3CHO_93.5_a', 'CH3CHO_93.5_b']
 
-#def main(argv):
 def main(source_name, lines):
     # 
-    """lines = ['N2Hp']
-    try:
-        opts, args = getopt.getopt(argv, "hs:l:", ["source=", "lines="])
-    except getopt.GetoptError:
-        print('process_files.py -s <sourcename> -l <lines>')
-        sys.exit(2)
-
-    for opt, arg in opts:
-        if opt == '-h':
-            print('process_files.py -s <sourcename> -l <lines>')
-            sys.exit()
-        elif opt in ("-s", "--sourcename"):
-            source_name = arg
-        elif opt in ("-l", "--lines"):
-            lines = [arg]
-    """
     #Define source
-    if source_name == 'NGC1333':
+    if source_name == 'ngc1333':
         source = 'NGC1333*'
         source_out = 'NGC1333'
         ra0 = 3.4862
         dec0 =  31.23
-    elif (source_name == 'B5') | (source_name == 'Barnard5'):
+        vlsr = 5.0
+    elif (source_name == 'b5') | (source_name == 'barnard5'):
         source = 'B5*'
         source_out = 'B5'
         ra0 = 3.794
         dec0 = 32.865
-    elif (source_name == 'Per2') | (source_name == 'Per-emb-2'):
+        vlsr = 9.0
+    elif (source_name == 'per2') | (source_name == 'per-emb-2'):
         source = 'PER2*'
         source_out = 'Per-emb-2'
         ra0 = 3.53806
         dec0 = 30.830
+        vlsr = 5.0
+    elif (source_name == 'cloudh'):
+        source = 'CLOUDH'
+        source_out = 'CloudH'
+        ra0 = 18 + (57 + 7.8/60.) / 60. #30.830
+        dec0 = 2 + (10. + 39.1/60.) / 60. #3.53806
+        vlsr = 45.0
     else:
-        print('Sources accepted at the moment are: Pper-emb-2, NGC1333, and B5')
+        print('Sources accepted at the moment are: Per-emb-2, NGC1333, CloudH, and B5')
         sys.exit(2)
-
+    freq_corr = (1 - vlsr / 3e5)
     ### get data files list
     inputdir = 'raw_data/'
-    inputfiles = glob('%s/FTS*.30m' %inputdir)
+    inputfiles = glob('%s/*.30m' %inputdir)
 
     # Just in case there are files that must be avoided.
     # ignorefiles = ['raw_data/none.30m']
@@ -133,6 +121,7 @@ def main(source_name, lines):
             if inputfile in ignorefiles:
                 print('[INFO] Ignoring file: %s' %inputfile)
                 continue
+            print('[INFO] Processing file: %s' %inputfile)
             #Load file and det defaults
             sic('file in %s' %inputfile)
             sic('set source %s' %source)
@@ -140,7 +129,7 @@ def main(source_name, lines):
             sic('set line *')
 
             #Open and check file
-            sic('find /frequency %s' %freq) #only obs with refrenecy
+            sic('find /frequency {0}'.format(freq * freq_corr)) #only obs with refrenecy
             if g.found == 0:
                 #raise RuntimeError('No data found!')
                 continue
@@ -182,11 +171,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
             description="This scrips processes 30-m observations and it creates cubes.")
     parser.add_argument('-s', '--source', 
-        type=str, default='NGC1333', 
+        type=str, default='CLOUDH', 
         help='Source name to process.')
     parser.add_argument('-l', '--lines', 
         type=str, default=['N2Hp'], nargs='+', 
         help='Line names to process. This can be an array with linenames.')
     args = parser.parse_args()
     
-    main(args.source, args.lines)
+    main(args.source.lower(), args.lines)
