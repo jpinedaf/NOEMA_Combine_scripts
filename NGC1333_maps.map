@@ -1,0 +1,89 @@
+begin procedure prepare_point
+  !
+  ! Input parameters:
+  ! 1st argument: file basename
+  ! 2nd argument: Correlator quarter, integer from 1 to 4
+  !
+  if (pro%narg.ne.2) then
+    message e prepare_point "Usage: @ prepare_point filename Qi"
+    return base
+  endif
+
+  define char*100 filename
+  define integer Qi
+
+  let filename 'pro%arg[1]' !&1
+  let Qi 'pro%arg[2]'
+  
+  let name 'filename'
+  let type uvt
+  go setup
+  go uvmap
+  !
+  ! common coordinate center
+  !
+  uv_shift 03:29:10.000 +31:14:00.000
+  write uv 'filename'_shift.uvt new
+  ! 
+  read uv 'filename'.uvt
+  if (Qi.eq.1) then
+    uv_baseline 0 /range -7470 -7524 -7144 -7221 -6864 -5893 -4587 -4564 -4549 -4518 -3571 -3475 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+    write uv 'filename'_uvsub.uvt new
+    uv_filter /zero /range -7470 -7524 -7144 -7221 -6864 -5893 -4587 -4564 -4549 -4518 -3571 -3475 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+    write uv 'filename'_uvsub_filter.uvt new
+    read uv 'filename'.uvt
+    uv_filter /range -7470 -7524 -7144 -7221 -6864 -5893 -4587 -4564 -4549 -4518 -3571 -3475 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+  !
+  else if (Qi.eq.2) then
+    uv_baseline 0 /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+    write uv 'filename'_uvsub.uvt new
+    uv_filter /zero /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+    write uv 'filename'_uvsub_filter.uvt new
+    read uv 'filename'.uvt
+    uv_filter /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+  !
+  else if (Qi.eq.3) then
+    uv_baseline 0 /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+    write uv 'filename'_uvsub.uvt new
+    uv_filter /zero /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+    write uv 'filename'_uvsub_filter.uvt new
+    read uv 'filename'.uvt
+    uv_filter /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+  !
+  else if (Qi.eq.4) then
+    uv_baseline 0 /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+    write uv 'filename'_uvsub.uvt new
+    uv_filter /zero /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+    write uv 'filename'_uvsub_filter.uvt new
+    read uv 'filename'.uvt
+    uv_filter /range -7470 -7524 -6864 -5893 -4587 -4564 -3571 -3583 -1006 -1039 -479 -428 -243 -203 -145 -103 1275 1325 2835 2856 5938 5958 7508 7540 velocity
+  else
+    message e prepare_point "Usage: @ prepare_point filename Qi"
+    message e prepare_point "Qi must be interger between 1 and 4"
+    return base
+  endif
+  
+  uv_continuum
+  write uv 'filename'_cont.uvt new
+  !
+  ! shallow clean cube of uvsub_filter
+  !
+  let name 'filename'_uvsub_filter
+  let type uvt
+  go setup
+  go uvmap
+  let ares 20e-3
+  let fres 0
+  go clean
+  !
+  ! make continuum uvt
+  !
+  say "Processed file "'filename'
+end procedure prepare_point
+
+!@ prepare_point NGC1333_P1-L01L05 1 !line_velo 
+!@ prepare_point NGC1333_P2-L01L05 1 !
+!@ prepare_point NGC1333_P3-L01L05 1 !
+!@ prepare_point NGC1333_P4-L01L05 1 !
+!
+@ prepare_point NGC1333_P1P2P3P4-L01L05_shift 1 !line_velo 

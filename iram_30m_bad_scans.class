@@ -1,0 +1,29 @@
+!
+! script to comment remove compromised scans seen on 2022-feb-21
+!
+file in FTSOdp20220220.30m
+file out FTSOdp20220220_fix.30m single
+
+set scan 1 53
+set telescope 30ME0*I-*
+find
+get zero
+sic message class s-i
+for i 1 to found
+    get n
+    write
+next
+
+!
+! now save all other data
+!
+set scan 54
+set telescope *
+find
+get zero
+for i 1 to found
+    get n
+    write
+next
+sic message class s+i
+

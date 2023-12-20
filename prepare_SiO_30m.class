@@ -1,0 +1,26 @@
+
+file in NGC1333_SiO.30m
+file out NGC1333_SiO_L17.30m single /overwrite
+
+
+find
+set mod x auto
+set unit v f
+for i 1 to found
+    get n
+    modify Beam_Eff /Ruze
+    modify frequency 86846.96
+    write
+next i
+
+file in NGC1333_SiO_L17.30m 
+find
+
+table NGC1333_SiO_L17.tab new /nocheck source /like ../NOEMA/pre_merge/L17/NGC1333_SiO_L17.uvt
+
+xy_map NGC1333_SiO_L17
+
+let name NGC1333_SiO_L17
+let type lmv
+go view
+
