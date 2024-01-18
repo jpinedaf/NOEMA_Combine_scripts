@@ -43,7 +43,7 @@ obs_param = {
     'H13CN': {'freq': 86339.9214, 'vel_ext': '-35 45', 'vel_win':'-2 1 4 15'},
     'HC15N': {'freq': 86054.9610, 'vel_ext': '-35 45', 'vel_win':'5 10'},
     'H15NC': {'freq': 88865.692, 'vel_ext': '-35 45', 'vel_win':'5 10'},
-    'HN13C': {'freq': 870908500, 'vel_ext': '-35 45', 'vel_win':'5 10'},
+    'HN13C': {'freq': 87090.8500, 'vel_ext': '-35 45', 'vel_win':'5 10'},
     'DNC': {'freq': 76305.72700, 'vel_ext': '-35 45', 'vel_win':'5 12'},
     'HNC': {'freq': 90663.56800, 'vel_ext': '-35 45', 'vel_win':'2 15'},
     'H2CO': {'freq': 72837.94800, 'vel_ext': '-35 45', 'vel_win':'-5 20'},
