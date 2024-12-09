@@ -1,108 +1,119 @@
-"""Reduce IRAM 30-m observaitons"""
-
-"""Need to set up and source the Gildas path"""
-## Source gildas installation - outside of python
-# source /vol/software/software/astro/gildas/initgildas-nov18a.sh
-## Add gildas installation to python path
-# export PYTHONPATH=$PYTHONPATH:/vol/software/software/astro/gildas/gildas-exe-nov18a/x86_64-ubuntu18.04-gfortran/python
-##
-
-"""Import  pygildas  modeules"""
-import pygildas
-import pyclass
-
-"""General imports"""
-from glob import glob
-import numpy as np
+#!/usr/bin/env python3
+from __future__ import annotations
+import tempfile
 import os
+import argparse
+import numpy as np
+from config import source_catalogue, line_catalogue, uvt_dir, uvt_dir_out, dir_30m
 
-"""Initial"""
-# get the gildas command line interpreter to issue commands quickly
-sic = pyclass.comm
-# get the pyclass.gdict object for easy Gildas variable access
-g = pyclass.gdict
-# sic('SIC MESSAGE GLOBAL ON') # or OFF for less noise
-###
+source_print = ''
+for key_i in source_catalogue.keys():
+    source_print += key_i + ', '
 
-### get data files list
-uvt_dir = '../NOEMA/pre_merge/'
-uvt_dir_out = '../NOEMA/merged/'
-#inputfiles = glob('%s/FTS*.30m' %inputdir)
+# load parameters used for the preparation of the data
+line_name, QN, freq, name_str, QN_str, Lid, vel_width = np.loadtxt(
+    line_catalogue,
+    dtype="U",
+    delimiter=",",
+    quotechar='"',
+    comments="#", usecols=(0, 1, 2, 3, 4, 9, 10),
+    unpack=True)
 
-#Define source
-source = 'NGC1333'
 
-obs_param = {
-    'DCOp': {'freq': 72039.31220, 'Lid': 'L09', 'uvt': 'NGC1333_DCOp_L09.uvt'},
-    'HCOp': {'freq': 89188.52470, 'Lid': 'L22', 'uvt': 'NGC1333_HCOp_L22.uvt'},
-    'H13COp': {'freq': 86754.28840, 'Lid': 'L17', 'uvt': 'NGC1333_H13COp_L17.uvt'},
-    'DCN': {'freq': 72414.69360, 'Lid': 'L10', 'uvt': 'NGC1333_DCN_L10.uvt'},
-    'HCN': {'freq': 88631.8475, 'Lid': 'L21', 'uvt': 'NGC1333_HCN_L21.uvt'},
-    #'H13CN': {'freq': 86339.9214, 'Lid': 'L10', 'uvt':'-2 1 4 15'},
-    #'HC15N': {'freq': 86054.9610, 'Lid': '-35 45', 'uvt':'5 10'},
-    'DNC': {'freq': 76305.700, 'Lid': 'L15', 'uvt': 'NGC1333_DNC_L15.uvt'},
-    'HNC': {'freq': 90663.56800, 'Lid': 'L23', 'uvt': 'NGC1333_HNC_L23.uvt'},
-    #'H2CO': {'freq': 72837.94800, 'Lid': '-35 45', 'uvt':'-5 20'},
-    'HC3N_72': {'freq': 72783.82200, 'Lid': 'L11', 'uvt':'NGC1333_HC3N_L11.uvt'},
-    'HC3N_91': {'freq': 90979.02300, 'Lid': 'L24', 'uvt':'NGC1333_HC3N_L24.uvt'},
-    'N2Dp': {'freq': 77109.24000, 'Lid': 'L16', 'uvt': 'NGC1333_N2Dp_L16.uvt'},
-    'N2Hp': {'freq': 93171.61700, 'Lid': 'L28', 'uvt': 'NGC1333_N2Hp_L28.uvt'},
-    #'SO2': {'freq': 72758.23500, 'Lid': 'L10', 'uvt':'0 15'},
-    'SO2': {'freq': 72758.24340, 'Lid': 'L11', 'uvt':'NGC1333_SO2_L11.uvt'},
-    'SiO': {'freq': 86846.96, 'Lid': 'L17', 'uvt': 'NGC1333_SiO_L17.uvt'},
-    #
-    'CCH_873_a': {'freq':  87284.105, 'Lid': 'L18', 'uvt': 'NGC1333_CCH_a_L18.uvt'},
-    'CCH_873_b': {'freq':  87316.925, 'Lid': 'L18', 'uvt': 'NGC1333_CCH_b_L18.uvt'},
-    'CCH_873_c': {'freq':  87328.624, 'Lid': 'L18', 'uvt': 'NGC1333_CCH_c_L18.uvt'},
-    }
+def get_line_param(line_name_i: str, QN_i: str) -> int:
+    """
+    Function to find the index of the line in the catalogue.
+    If the Quantum number is not given, it will return the line only if there is a single entry in the catalogue.
+    In the case of multiple line entried for the same molecule, an error is raised.
+    """
+    if QN_i is None:
+        idx = np.where(line_name == line_name_i)[0]
+        if len(idx) > 1:
+            raise ValueError(
+                f'Line name is not unique: {line_name_i}, add the Quantum number (QN).')
+    else:
+        print(f'line_name: {line_name_i}, QN: {QN_i}')
+        idx = np.where((line_name == line_name_i) & (QN_str == QN_i))[0]
+    if len(idx) == 0:
+        raise ValueError(f'Line not found in the catalogue: {line_name_i}')
+    return idx
 
-lines = ['HCOp'] #  'HC3N_91']#, 'N2Dp'] #
 
-for line in lines:
-    print('[INFO] Reducing line: %s' %line)
-    inputfile = '{0}_{1}.30m'.format(source, line)
-    sic('file in %s' %inputfile)
+def line_prepare(source_name, lines, QNs) -> None:
+    if source_name in source_catalogue:
+        source = source_catalogue[source_name]['source']
+        source_out = source_catalogue[source_name]['source_out']
+        ra0 = source_catalogue[source_name]['ra0']
+        dec0 = source_catalogue[source_name]['dec0']
+        vlsr = source_catalogue[source_name]['vlsr']
+    else:
+        raise ValueError(
+            f'Source {source_name} not found in the catalogue: {source_print}')
 
-    #Get frequency
-    freq = obs_param[line]['freq']
-    Lid = obs_param[line]['Lid']
-    uvt_file = uvt_dir + Lid + '/' + obs_param[line]['uvt']
-    ###Define output
-    outputfile = obs_param[line]['uvt'].replace('.uvt', '') # '{0}_{1}_{2}'.format(source, line, Lid)
+    for line_i, QN_i in zip(lines, QNs):
+        print(f'[INFO] Reducing line: {line_i} with QN: {QN_i}')
+        index = get_line_param(line_i, QN_i)
+        print(source_out, line_name[index][0], QN[index][0])
+        inputfile = '{0}_{1}_{2}.30m'.format(
+            source_out, line_name[index][0], QN[index][0])
+        # Get frequency
+        freq_i = freq[index][0].astype(float)*1e3
+        Lid_i = Lid[index][0]  # obs_param[line]['Lid']
+        uvt_filename = f'{source_out}_{line_i}_{QN[index][0]}_{Lid_i}.uvt'
+        print(uvt_dir, Lid_i, uvt_filename)
+        uvt_file = uvt_dir + Lid_i + '/' + uvt_filename
+        outputfile = dir_30m + uvt_filename.replace('.uvt', '')
 
-    os.system('rm %s.*' %outputfile)
-    sic('file out %s.30m single /overwrite' %outputfile)
-    print('[INFO] Removing old output file')
-    print('[INFO] Making new output file: %s' %outputfile)
-    ####
-    #Open and check file
-    sic('find') #only obs with refrenecy
-    if g.found == 0:
-        #raise RuntimeError('No data found!')
-        continue
-    #Loop through spectral, baseline, and output
-    inds = g.idx.ind
-    sic('sic message class s-i') #! Speed-up long loops by avoiding too many screen informational messages
-    sic('set mode x auto')
-    sic('set unit v f')
-    for ind in inds:
-        sic('get %s' %ind)
-        sic('modify freq %s' %freq)
-        sic('modify Beam_Eff /Ruze')
-        sic('write')
-    sic('sic message class s+i') #! Toggle back screen informational messages
-
-    ###Resample as 
-    sic('file in %s.30m' %outputfile)
-    sic('find /all')
-    sic('table {0} new /NOCHECK source /like {1}'.format(outputfile, uvt_file))
-    sic('xy_map %s' %outputfile)
-    #sic('let name %s' %outputfile)
-    #sic('let type lmv')
-    #sic('go view')
-    
+        os.system('rm %s.*' % outputfile)
+        fb = tempfile.NamedTemporaryFile(
+            delete=True, mode='w+', dir='.', suffix='.class')
+        fb.write(f'file in {dir_30m}{inputfile}\n')
+        fb.write(f'file out {outputfile}.30m  single /overwrite\n')
+        fb.write(f"say [INFO] Removing old output file\n")
+        fb.write(f'say "[INFO] Making new output file: {outputfile}"\n')
+        fb.write(f'find\n')
+        fb.write(f'set mode x auto\n')
+        fb.write(f'set unit v f\n')
+        fb.write(f'get zero\n')
+        fb.write(f'sic message class s-i\n')
+        fb.write(f'for i 1 to found\n')
+        fb.write(f'  get next\n')
+        fb.write(f'  modify linename {name_str[index][0]}\n')
+        fb.write(f'  modify freq {freq_i}\n')
+        fb.write(f'  modify source {source_out}\n')
+        fb.write(f'  modify Beam_Eff /Ruze\n')
+        fb.write(f'  write\n')
+        fb.write(f'next\n')
+        fb.write(f'sic message class s+i\n')
+        fb.write(f'file in {outputfile}.30m\n')
+        fb.write(f'find /all\n')
+        fb.write(f'table {outputfile} new /NOCHECK source /like {uvt_file}\n')
+        # fb.write(f'xy_map {outputfile}\n')
+        fb.write(f'exit\n')
+        fb.flush()
+        os.system('class -nw @ %s' % fb.name)
+        fb.close()
     # copy to folder for merging
-    os.system('cp {0}.tab {1}/{2}/.'.format(outputfile, uvt_dir_out, Lid))
-    os.system('cp {0} {1}/{2}/.'.format(uvt_file, uvt_dir_out, Lid))
+        merged_folder = f'{uvt_dir_out}{Lid_i}'
+        if not os.path.exists(merged_folder):
+            os.makedirs(merged_folder)
+        os.system(
+            'cp {0}.tab {1}/.'.format(outputfile, merged_folder))
+        os.system('cp {0} {1}/.'.format(uvt_file, merged_folder))
 
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="This scrips processes 30-m observations and it creates cubes.")
+    parser.add_argument('-s', '--source',
+                        type=str, default='CLOUDH',
+                        help='Source name to process.')
+    parser.add_argument('-l', '--lines',
+                        type=str, default=['N2Hp'], nargs='+',
+                        help='Line names to process. This can be an array with linenames.')
+    parser.add_argument('-qn', '--QNs',
+                        type=str, default=[None], nargs='+',
+                        help='Quantum number strings. This can be an array.')
+    args = parser.parse_args()
+
+    line_prepare(args.source.upper(), args.lines, args.QNs)
