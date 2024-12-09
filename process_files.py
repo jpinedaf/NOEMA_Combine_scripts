@@ -7,6 +7,7 @@ import os
 
 from config import source_catalogue, line_catalogue, uvt_dir, uvt_dir_out, dir_30m, ignorefiles, inputdir
 
+
 source_print = ''
 for key_i in source_catalogue.keys():
     source_print += key_i + ', '
