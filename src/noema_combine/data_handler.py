@@ -122,12 +122,12 @@ def get_source_param(source_name: str) -> tuple[str, str, str, float, float, flo
         )
     # return idx
     return (
-        list_source_name[idx],
-        list_source_key[idx],
-        list_source_out[idx],
-        list_RA[idx].astype(float),
-        list_Dec[idx].astype(float),
-        list_Vlsr[idx].astype(float),
+        list_source_name[idx][0],
+        list_source_key[idx][0],
+        list_source_out[idx][0],
+        list_RA[idx][0].astype(float),
+        list_Dec[idx][0].astype(float),
+        list_Vlsr[idx][0].astype(float),
     )
 
 
@@ -304,7 +304,8 @@ def line_reduce_30m(source_name: str, line_i: str, QN_i: str) -> None:
     line_name_i = line_name[index][0]
     freq_i = freq[index][0].astype(float) * 1e3
     dv_base = vel_width_base_30m[index][0].astype(float)
-    dv = vel_width_30m[index[0]].astype(float)
+    dv = vel_width_30m[index][0].astype(float)
+    print(vlsr+0.1, dv+0.1, dv_base+0.1)
     vel_win = "{0:.2f}  {1:.2f}".format(vlsr - dv_base, vlsr + dv_base)
     vel_ext = "{0:.2f}  {1:.2f}".format(vlsr - dv, vlsr + dv)
     # Define output
@@ -320,7 +321,8 @@ def line_reduce_30m(source_name: str, line_i: str, QN_i: str) -> None:
     fb.write(f'say "[INFO] Making new output file: {file_30m}"\n')
     ####
     # Loop through files - one file per date
-    for inputfile in inputfiles:
+    for input_filename in inputfiles:
+        inputfile = os.path.join(inputdir, input_filename)
         # check everyfile to be ignored if it is the current file
         for ignorefile in ignorefiles:
             if ignorefile in inputfile:
