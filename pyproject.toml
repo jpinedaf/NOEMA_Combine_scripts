@@ -55,3 +55,6 @@ directory = "coverage_html_report"
 
 [project.urls]
 Homepage = "https://github.com/jpinedaf/NOEMA_Combine_scripts/"
+
+[tool.black]
+target-version = ['py37']
