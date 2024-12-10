@@ -5,7 +5,7 @@ import argparse
 import numpy as np
 import os
 
-from config import source_catalogue, line_catalogue, uvt_dir, uvt_dir_out, dir_30m, ignorefiles, inputdir
+from noema_combine.config import source_catalogue, line_catalogue, uvt_dir, uvt_dir_out, dir_30m, ignorefiles, inputdir
 
 
 source_print = ''

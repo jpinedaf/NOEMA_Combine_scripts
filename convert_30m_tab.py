@@ -4,7 +4,7 @@ import tempfile
 import os
 import argparse
 import numpy as np
-from config import source_catalogue, line_catalogue, uvt_dir, uvt_dir_out, dir_30m
+from noema_combine.config import source_catalogue, line_catalogue, uvt_dir, uvt_dir_out, dir_30m
 
 source_print = ''
 for key_i in source_catalogue.keys():

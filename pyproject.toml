@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools >= 64", "setuptools-scm >= 8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noema_combine"
+dependencies = [
+  "importlib-resources;python_version<'3.9'",
+    "numpy",
+]
+requires-python = ">=3.7"
+authors = [
+  {name = "Jaime E. Pineda", email = "jpineda@mpe.mpg.de"},
+]
+maintainers = [
+  {name = "Jaime E. Pineda", email = "jpineda@mpe.mpg.de"},
+]
+description = "Package to be used for 30-m and NOEMA data processing and combination."
+readme = "README.md"
+license = {text = "MIT License"}
+
+dynamic = ["version"]
+
+[tool.setuptools_scm]
+
+[tool.setuptools]
+include-package-data = true
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
+
+[tool.coverage.run]
+branch = true
+source = ["noema_combine"]
+
+[tool.pytest.ini_options]
+pythonpath = "src/"
+addopts = [
+    "--import-mode=importlib"
+    ]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug",
+    "if __name__ == .__main__.:"
+    ]
+ignore_errors = true
+
+[tool.coverage.html]
+directory = "coverage_html_report"
+
+[project.urls]
+Homepage = "https://github.com/jpinedaf/NOEMA_Combine_scripts/"
