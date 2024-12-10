@@ -280,15 +280,14 @@ def line_prepare_merge(source_name: str, line_i: str, QN_i: str) -> None:
         f'table "{merge_uvt[:-4]}" new /NOCHECK source /like "{file_uvt}"\n')
     fb.write(f"exit\n")
     fb.flush()
-    os.system(f"class -nw @ {fb.name}")
-
-    fb.close()
-    # copy to folder for merging
     merged_folder = os.path.dirname(merge_uvt)  # get path only
-
     if not os.path.exists(merged_folder):
         os.makedirs(merged_folder)
+
+    # copy to folder for merging
     # os.system("cp {0}.tab {1}/.".format(outputfile, merged_folder))
+    os.system(f"class -nw @ {fb.name}")
+    fb.close()
     os.system(f'cp {file_uvt} {merged_folder}/.')
 
 
