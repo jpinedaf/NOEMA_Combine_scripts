@@ -1,0 +1,186 @@
+receiver : 3
+highres_parameters: # for LO LI UI UO quarters
+  number_windows: 38 # number of high-resolution windows
+  LI_start: 23   # starting window for LI quarter (1-indexed)
+  UI_start: 32   # starting window for UI quarter (1-indexed)
+  UO_start: 40   # starting window for UO quarter (1-indexed)
+setups:
+  setup001:
+    sources:
+      - Per-emb-2
+      - L1448-IRS3B
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-001-04-dec/04-dec-2019-l19mb001
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-001-05-sep/05-sep-2020-l19mb001
+      - file: ../hpbs/Dconfig/hpb-001-06-aug/06-aug-2020-l19mb001
+      - file: ../hpbs/Dconfig/hpb-001-05-apr/05-apr-2021-l19mb001
+      - file: ../hpbs/Dconfig/hpb-001-08-apr/08-apr-2021-l19mb001
+  setup002:
+    sources:
+      - SVS13A
+      - Per-emb-50
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-002-05-jan/05-jan-2020-l19mb002
+      - file: ../hpbs/Cconfig/hpb-002-29-dec/29-dec-2019-l19mb002
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-002-06-aug/06-aug-2020-l19mb002
+      - file: ../hpbs/Dconfig/hpb-002-07-sep/07-sep-2020-l19mb002
+  setup002_Per50_only:
+    sources:
+      - Per-emb-50
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-002-05-jan/05-jan-2020-l19mb002
+      - file: ../hpbs/Cconfig/hpb-002-29-dec/29-dec-2019-l19mb002
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-002-06-aug/06-aug-2020-l19mb002
+      - file: ../hpbs/Dconfig/hpb-002-07-sep/07-sep-2020-l19mb002
+    A-files:
+      - file: ../hpbs/Aconfig/19-jan-2023-w22ah001
+      - file: ../hpbs/Aconfig/21-jan-2023-w22ah001
+  setup003:
+    sources:
+      - HH211
+      - Per-emb-8
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-003-05-jan/05-jan-2020-l19mb003
+      - file: ../hpbs/Cconfig/hpb-003-30-dec/30-dec-2019-l19mb003
+      - file: ../hpbs/Cconfig/hpb-003-31-dec/31-dec-2019-l19mb003
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-003-01-sep/01-sep-2020-l19mb003
+      - file: ../hpbs/Dconfig/hpb-003-03-sep/03-sep-2020-l19mb003
+      - file: ../hpbs/Dconfig/hpb-003-05-aug/05-aug-2020-l19mb003
+      - file: ../hpbs/Dconfig/hpb-003-29-jul/29-jul-2020-l19mb003
+  setup004:
+    sources:
+      - B1-bS
+      - B1-bN
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-004-06-jan/06-jan-2020-l19mb004
+      - file: ../hpbs/Cconfig/hpb-004-08-jan/08-jan-2020-l19mb004
+      - file: ../hpbs/Cconfig/hpb-004-09-jan/09-jan-2020-l19mb004
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-004-06-sep/06-sep-2020-l19mb004
+      - file: ../hpbs/Dconfig/hpb-004-09-oct/09-oct-2020-l19mb004
+      - file: ../hpbs/Dconfig/hpb-004-13-apr/13-apr-2021-l19mb004
+  setup005:
+    sources:
+      - L1448IRS3A
+      - L1448C
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-005-06-jan/06-jan-2020-l19mb005
+      - file: ../hpbs/Cconfig/hpb-005-08-jan/08-jan-2020-l19mb005
+      - file: ../hpbs/Cconfig/hpb-005-09-jan/09-jan-2020-l19mb005
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-005-06-sep/06-sep-2020-l19mb005
+      - file: ../hpbs/Dconfig/hpb-005-09-oct/09-oct-2020-l19mb005
+      - file: ../hpbs/Dconfig/hpb-005-13-apr/13-apr-2021-l19mb005
+  setup006:
+    sources:
+      - IC348MMS
+      - Per-emb-5
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-006-09-nov/09-nov-2020-l19mb006
+      - file: ../hpbs/Cconfig/hpb-006-10-nov/10-nov-2020-l19mb006
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-006-08-aug/08-aug-2021-l19mb006
+      - file: ../hpbs/Dconfig/hpb-006-30-aug/30-aug-2021-l19mb006
+  setup007:
+    sources:
+      - IRAS4C
+      - Per-emb-18
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-007-14-nov/14-nov-2020-l19mb007
+      - file: ../hpbs/Cconfig/hpb-007-20-nov/20-nov-2020-l19mb007
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-007-08-aug/08-aug-2021-l19mb007
+  setup008:
+    sources:
+      - IRAS2A
+      - IRAS2B
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-008-21-nov/21-nov-2020-l19mb008
+      - file: ../hpbs/Cconfig/hpb-008-27-nov/27-nov-2020-l19mb008
+      - file: ../hpbs/Cconfig/hpb-008-28-nov/28-nov-2020-l19mb008
+      - file: ../hpbs/Cconfig/hpb-008-02-dec/02-dec-2020-l19mb008
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-008-28-sep/28-sep-2021-l19mb008
+  setup009:
+    sources:
+      - B5-IRS1
+      - Per-emb-62
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-009-23-dec/23-dec-2021-l19mb009
+        RF calibration type: baseline
+      - file: ../hpbs/Cconfig/hpb-009-31-dec/31-dec-2021-l19mb009
+        RF calibration type: baseline
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-009-05-apr/05-apr-2022-l19mb009
+  setup010:
+    sources:
+      - SVS13B
+      - IRAS4B
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-010-13-jan/13-jan-2022-l19mb010
+        RF calibration type: baseline
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-010-10-apr/10-apr-2022-l19mb010
+  setup011:
+    sources:
+      - Per-emb-29
+      - Per-emb-30
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-011-17-jan/17-jan-2022-l19mb011-11ant
+        RF calibration type: baseline
+      - file: ../hpbs/Cconfig/hpb-011-17-jan/17-jan-2022-l19mb011-12ant
+        RF calibration type: baseline
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-011-13-apr/13-apr-2022-l19mb011
+      - file: ../hpbs/Dconfig/hpb-011-19-sep/19-sep-2022-l19mb011
+  setup012:
+    sources:
+      - Per-emb-22
+      - L1448NW
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-012-21-jan/21-jan-2022-l19mb012
+        RF calibration type: baseline
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-012-03-oct/03-oct-2022-l19mb012
+  setup013:
+    sources:
+      - Per-emb-9
+      - SVS13C
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-013-08-apr/08-apr-2023-l19mb013
+      - file: ../hpbs/Cconfig/hpb-013-12-jan/12-jan-2024-l19mb013
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-013-14-jul/14-jul-2023-l19mb013
+      - file: ../hpbs/Dconfig/hpb-013-31-aug/31-aug-2023-l19mb013
+      - file: ../hpbs/Dconfig/hpb-013-08-sep/08-sep-2023-l19mb013
+  setup014:
+    sources:
+      - Per-emb-19
+      - B1-A
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-014-09-apr/09-apr-2023-l19mb014
+      - file: ../hpbs/Cconfig/hpb-014-10-apr/10-apr-2023-l19mb014
+      - file: ../hpbs/Cconfig/hpb-014-07-nov/07-nov-2023-l19mb014
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-014-05-sep/05-sep-2023-l19mb014
+      - file: ../hpbs/Dconfig/hpb-014-10-sep/10-sep-2023-l19mb014
+      - file: ../hpbs/Dconfig/hpb-014-19-sep/19-sep-2023-l19mb014
+  setup015:
+    sources:
+      - Per-emb-58
+      - Per-emb-65
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-015-27-jan/27-jan-2024-l19mb015
+  setup016:
+    sources:
+      - Per-emb-25
+      - Per-emb-35
+    C-files:
+      - file: ../hpbs/Cconfig/hpb-016-19-jan/19-jan-2024-l19mb016
+    D-files:
+      - file: ../hpbs/Dconfig/hpb-016-06-sep/06-sep-2023-l19mb016
+      - file: ../hpbs/Dconfig/hpb-016-11-sep/11-sep-2023-l19mb016

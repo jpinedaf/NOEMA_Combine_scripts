@@ -1,0 +1,274 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+!  Generate LR + HR chunk UVT files 
+!
+!  Created for MIOP L19MB project
+!  generate_miop_uvt, 2025-10-14
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+def integer new_file /global
+let new_file 1
+!
+!
+! Make uv-tables for sources: B1-bS and B1-bN
+! ! &1 = output table name parameter
+!
+! This procedure makes either make a new uvt
+! or append to a uvt, depending on the value of new_file
+!
+begin procedure makespw
+  if (new_file.eq.1) then
+    find /proc corr /sou B1-bS
+    table "../../uvts/B1-bS/CDconfig/B1-bS_CD_&1" new
+    find /proc corr /sou B1-bN
+    table "../../uvts/B1-bN/CDconfig/B1-bN_CD_&1" new
+  else
+    find /proc corr /sou B1-bS
+    table "../../uvts/B1-bS/CDconfig/B1-bS_CD_&1"
+    find /proc corr /sou B1-bN
+    table "../../uvts/B1-bN/CDconfig/B1-bN_CD_&1"
+  endif
+end procedure makespw
+!
+!
+begin procedure loopspw
+!  These define the chunks used to make each spw
+!
+!!!!!!!!! Wideband chunks
+!
+  set selection line lsb l001 and l005 
+  @ makespw lo
+  !
+  set selection line lsb l002 and l006 
+  @ makespw li
+  !
+  !
+  set selection line usb l003 and l007 
+  @ makespw ui
+  !
+  set selection line usb l004 and l008 
+  @ makespw uo
+  !
+  !!!!!!!!! LO chunks
+  !
+  set selection line lsb l009 and l048 
+  @ makespw l009l048 
+  !
+  set selection line lsb l010 and l049 
+  @ makespw l010l049 
+  !
+  set selection line lsb l011 and l050 
+  @ makespw l011l050 
+  !
+  set selection line lsb l012 and l051 
+  @ makespw l012l051 
+  !
+  set selection line lsb l013 and l052 
+  @ makespw l013l052 
+  !
+  set selection line lsb l014 and l053 
+  @ makespw l014l053 
+  !
+  set selection line lsb l015 and l054 
+  @ makespw l015l054 
+  !
+  set selection line lsb l016 and l055 
+  @ makespw l016l055 
+  !
+  set selection line lsb l017 and l056 
+  @ makespw l017l056 
+  !
+  set selection line lsb l018 and l057 
+  @ makespw l018l057 
+  !
+  set selection line lsb l019 and l058 
+  @ makespw l019l058 
+  !
+  set selection line lsb l020 and l059 
+  @ makespw l020l059 
+  !
+  set selection line lsb l021 and l060 
+  @ makespw l021l060 
+  !
+  set selection line lsb l022 and l061 
+  @ makespw l022l061 
+  !
+  !
+  !!!!!!!!! LI chunks
+  !
+  set selection line lsb l023 and l062 
+  @ makespw l023l062 
+  !
+  set selection line lsb l024 and l063 
+  @ makespw l024l063 
+  !
+  set selection line lsb l025 and l064 
+  @ makespw l025l064 
+  !
+  set selection line lsb l026 and l065 
+  @ makespw l026l065 
+  !
+  set selection line lsb l027 and l066 
+  @ makespw l027l066 
+  !
+  set selection line lsb l028 and l067 
+  @ makespw l028l067 
+  !
+  set selection line lsb l029 and l068 
+  @ makespw l029l068 
+  !
+  set selection line lsb l030 and l069 
+  @ makespw l030l069 
+  !
+  set selection line lsb l031 and l070 
+  @ makespw l031l070 
+  !
+  !
+  !!!!!!!!! UI chunks
+  !
+  set selection line usb l032 and l071 
+  @ makespw l032l071 
+  !
+  set selection line usb l033 and l072 
+  @ makespw l033l072 
+  !
+  set selection line usb l034 and l073 
+  @ makespw l034l073 
+  !
+  set selection line usb l035 and l074 
+  @ makespw l035l074 
+  !
+  set selection line usb l036 and l075 
+  @ makespw l036l075 
+  !
+  set selection line usb l037 and l076 
+  @ makespw l037l076 
+  !
+  set selection line usb l038 and l077 
+  @ makespw l038l077 
+  !
+  set selection line usb l039 and l078 
+  @ makespw l039l078 
+  !
+  !
+  !!!!!!!!! UO chunks
+  !
+  set selection line usb l040 and l079 
+  @ makespw l040l079 
+  !
+  set selection line usb l041 and l080 
+  @ makespw l041l080 
+  !
+  set selection line usb l042 and l081 
+  @ makespw l042l081 
+  !
+  set selection line usb l043 and l082 
+  @ makespw l043l082 
+  !
+  set selection line usb l044 and l083 
+  @ makespw l044l083 
+  !
+  set selection line usb l045 and l084 
+  @ makespw l045l084 
+  !
+  set selection line usb l046 and l085 
+  @ makespw l046l085 
+  !
+  set selection line usb l047 and l086 
+  @ makespw l047l086 
+  !
+end procedure loopspw
+!
+set default
+set scan 0 10000
+set offset 0 0
+set receiver 3
+set quality average
+set weight tsys on
+set weight calibration on
+set phase antenna atmospher internal relative
+set amplitude antenna absolute jansky relative
+set rf_passband antenna spectrum file 1 on
+set drop 0.00000001 0.00000001
+!
+file in ../hpbs/Cconfig/hpb-004-06-jan/06-jan-2020-l19mb004
+@ loopspw
+!
+!reuse the previous file
+let new_file 0
+!
+!
+set default
+set scan 0 10000
+set offset 0 0
+set receiver 3
+set quality average
+set weight tsys on
+set weight calibration on
+set phase antenna atmospher internal relative
+set amplitude antenna absolute jansky relative
+set rf_passband antenna spectrum file 1 on
+set drop 0.00000001 0.00000001
+!
+file in ../hpbs/Cconfig/hpb-004-08-jan/08-jan-2020-l19mb004
+@ loopspw
+!
+set default
+set scan 0 10000
+set offset 0 0
+set receiver 3
+set quality average
+set weight tsys on
+set weight calibration on
+set phase antenna atmospher internal relative
+set amplitude antenna absolute jansky relative
+set rf_passband antenna spectrum file 1 on
+set drop 0.00000001 0.00000001
+!
+file in ../hpbs/Cconfig/hpb-004-09-jan/09-jan-2020-l19mb004
+@ loopspw
+!
+set default
+set scan 0 10000
+set offset 0 0
+set receiver 3
+set quality average
+set weight tsys on
+set weight calibration on
+set phase antenna atmospher internal relative
+set amplitude antenna absolute jansky relative
+set rf_passband antenna spectrum file 1 on
+set drop 0.00000001 0.00000001
+!
+file in ../hpbs/Dconfig/hpb-004-06-sep/06-sep-2020-l19mb004
+@ loopspw
+!
+set default
+set scan 0 10000
+set offset 0 0
+set receiver 3
+set quality average
+set weight tsys on
+set weight calibration on
+set phase antenna atmospher internal relative
+set amplitude antenna absolute jansky relative
+set rf_passband antenna spectrum file 1 on
+set drop 0.00000001 0.00000001
+!
+file in ../hpbs/Dconfig/hpb-004-09-oct/09-oct-2020-l19mb004
+@ loopspw
+!
+set default
+set scan 0 10000
+set offset 0 0
+set receiver 3
+set quality average
+set weight tsys on
+set weight calibration on
+set phase antenna atmospher internal relative
+set amplitude antenna absolute jansky relative
+set rf_passband antenna spectrum file 1 on
+set drop 0.00000001 0.00000001
+!
+file in ../hpbs/Dconfig/hpb-004-13-apr/13-apr-2021-l19mb004
+@ loopspw
