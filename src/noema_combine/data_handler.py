@@ -3,6 +3,7 @@ import tempfile
 import os
 from glob import glob
 import numpy as np
+from numpy.typing import NDArray
 import configparser
 
 try:
@@ -15,13 +16,12 @@ config_file = "config.ini"
 if os.path.isfile(config_file):
     config.read(config_file)
 else:
-    pack_file = files("noema_combine").joinpath(config_file)
+    pack_file = str(files("noema_combine").joinpath(config_file))
     config.read(pack_file)
 
 file_source_catalogue = config["catalogues"]["source_catalogue"]
 if os.path.isfile(file_source_catalogue) == False:
-    file_source_catalogue = files(
-        "noema_combine").joinpath(file_source_catalogue)
+    file_source_catalogue = str(files("noema_combine").joinpath(file_source_catalogue))
     if os.path.isfile(file_source_catalogue) == False:
         raise FileNotFoundError(
             f"File not found: {config['catalogues']['source_catalogue']}"
@@ -29,12 +29,19 @@ if os.path.isfile(file_source_catalogue) == False:
 
 file_line_catalogue = config["catalogues"]["line_catalogue"]
 if os.path.isfile(file_line_catalogue) == False:
-    file_line_catalogue = files("noema_combine").joinpath(file_line_catalogue)
+    file_line_catalogue = str(files("noema_combine").joinpath(file_line_catalogue))
     if os.path.isfile(file_line_catalogue) == False:
         raise FileNotFoundError(
             f"File not found: {config['catalogues']['line_catalogue']}"
         )
 
+
+list_source_name: NDArray[np.str_]
+list_source_key: NDArray[np.str_]
+list_source_out: NDArray[np.str_]
+list_RA: NDArray[np.str_]
+list_Dec: NDArray[np.str_]
+list_Vlsr: NDArray[np.str_]
 
 (
     list_source_name,
@@ -56,19 +63,29 @@ source_print = ""
 for key_i in list_source_name:
     source_print += key_i + ", "
 
-ignorefiles = []
+ignorefiles: list[str] = []
 for key, item in config.items("file_handling"):
     if key.startswith("ignorefiles"):
         ignorefiles.append(item)
 
 
 # load parameters used for the preparation of the data
+line_name: NDArray[np.str_]
+QN: NDArray[np.str_]
+freq: NDArray[np.str_]
+name_str: NDArray[np.str_]
+QN_str: NDArray[np.str_]
+Lid: NDArray[np.str_]
+vel_width: NDArray[np.str_]
+vel_width_30m: NDArray[np.str_]
+vel_width_base_30m: NDArray[np.str_]
+
 (
     line_name,
-    QN,
+    qn,
     freq,
     name_str,
-    QN_str,
+    qn_str,
     Lid,
     vel_width,
     vel_width_30m,
@@ -89,24 +106,24 @@ uvt_dir_out = config["folders"]["uvt_dir_out"]
 inputdir = config["folders"]["inputdir"]
 
 
-def get_line_param(line_name_i: str, QN_i: str) -> int:
+def get_line_param(line_name_i: str, qn_i: str | None) -> int:
     """
     Function to find the index of the line in the catalogue.
     If the Quantum number is not given, it will return the line only if there is a single entry in the catalogue.
     In the case of multiple line entried for the same molecule, an error is raised.
     """
-    if QN_i is None:
+    if qn_i is None:
         idx = np.where(line_name == line_name_i)[0]
         if len(idx) > 1:
             raise ValueError(
                 f"Line name is not unique: {line_name_i}, add the Quantum number (QN)."
             )
     else:
-        print(f"line_name: {line_name_i}, QN: {QN_i}")
-        idx = np.where((line_name == line_name_i) & (QN_str == QN_i))[0]
+        print(f"line_name: {line_name_i}, QN: {qn_i}")
+        idx = np.where((line_name == line_name_i) & (qn_str == qn_i))[0]
     if len(idx) == 0:
         raise ValueError(f"Line not found in the catalogue: {line_name_i}")
-    return idx
+    return int(idx[0])
 
 
 def get_source_param(source_name: str) -> tuple[str, str, str, float, float, float]:
@@ -131,7 +148,9 @@ def get_source_param(source_name: str) -> tuple[str, str, str, float, float, flo
     )
 
 
-def get_uvt_window(source_name: str, Lid: str, uvsub: bool = True, selfcal: bool = False) -> str:
+def get_uvt_window(
+    source_name: str, Lid: str, uvsub: bool = True, selfcal: bool = False
+) -> str:
     """
     Function to generate the output file name for NOEMA uvt file.
     The file will be in the uvt_dir folder.
@@ -155,12 +174,13 @@ def get_uvt_window(source_name: str, Lid: str, uvsub: bool = True, selfcal: bool
         extension += "_uvsub"
     if selfcal == True:
         extension += "_sc"
-    uvt_filename = os.path.join(
-        uvt_dir, Lid, f"{source_name}_{Lid}{extension}.uvt")
+    uvt_filename = os.path.join(uvt_dir, Lid, f"{source_name}_{Lid}{extension}.uvt")
     return uvt_filename
 
 
-def get_uvt_file(source_name: str, line_name: str, QN: str, Lid: str, merge: bool = False) -> str:
+def get_uvt_file(
+    source_name: str, line_name: str, qn: str, Lid: str, merge: bool = False
+) -> str:
     """
     Function to generate the output file name for NOEMA uvt file.
     The format will be:
@@ -185,11 +205,14 @@ def get_uvt_file(source_name: str, line_name: str, QN: str, Lid: str, merge: boo
     else:
         dir_out = uvt_dir_out
     uvt_filename = os.path.join(
-        dir_out, Lid, f"{source_name}_{line_name}_{QN}_{Lid}.uvt")
+        dir_out, Lid, f"{source_name}_{line_name}_{qn}_{Lid}.uvt"
+    )
     return uvt_filename
 
 
-def get_30m_file(source_name: str, line_name: str, QN: str, Lid: str, merge: bool = False) -> str:
+def get_30m_file(
+    source_name: str, line_name: str, qn: str, Lid: str, merge: bool = False
+) -> str:
     """
     Function to generate the output file name for the 30m data.
     The format will be:
@@ -212,14 +235,14 @@ def get_30m_file(source_name: str, line_name: str, QN: str, Lid: str, merge: boo
         If True, the file will include the Lid information in the name.
     """
     if merge:
-        name_out = f"{source_name}_{line_name}_{QN}_{Lid}.30m"
+        name_out = f"{source_name}_{line_name}_{qn}_{Lid}.30m"
     else:
-        name_out = f"{source_name}_{line_name}_{QN}.30m"
+        name_out = f"{source_name}_{line_name}_{qn}.30m"
     outputfile = os.path.join(dir_30m, name_out)
     return outputfile
 
 
-def line_prepare_merge(source_name: str, line_i: str, QN_i: str) -> None:
+def line_prepare_merge(source_name: str, line_i: str, qn_i: str) -> None:
     """
     Function to prepare the 30m data for the merging.
     It will ensure that the 30m data are in Tmb and in the correct frequency.
@@ -237,25 +260,20 @@ def line_prepare_merge(source_name: str, line_i: str, QN_i: str) -> None:
     """
     _, _, source_out, _, _, _ = get_source_param(source_name)
 
-    print(f"[INFO] Reducing line: {line_i} with QN: {QN_i}")
-    index = get_line_param(line_i, QN_i)
-    QN_name_i = QN[index][0]
+    print(f"[INFO] Reducing line: {line_i} with QN: {qn_i}")
+    index = get_line_param(line_i, qn_i)
+    qn_name_i = qn[index][0]
     line_name_i = line_name[index][0]
     freq_i = freq[index][0].astype(float) * 1e3
     Lid_i = Lid[index][0]
-    file_uvt = get_uvt_file(source_out, line_name_i,
-                            QN_name_i, Lid_i, merge=False)
-    merge_uvt = get_uvt_file(source_out, line_name_i,
-                             QN_name_i, Lid_i, merge=True)
+    file_uvt = get_uvt_file(source_out, line_name_i, qn_name_i, Lid_i, merge=False)
+    merge_uvt = get_uvt_file(source_out, line_name_i, qn_name_i, Lid_i, merge=True)
 
-    file_30m = get_30m_file(source_out, line_name_i,
-                            QN_name_i, Lid_i, merge=False)
-    merge_30m = get_30m_file(source_out, line_name_i,
-                             QN_name_i, Lid_i, merge=True)
+    file_30m = get_30m_file(source_out, line_name_i, qn_name_i, Lid_i, merge=False)
+    merge_30m = get_30m_file(source_out, line_name_i, qn_name_i, Lid_i, merge=True)
 
     os.system(f"rm {merge_30m[:-4]}.*")
-    fb = tempfile.NamedTemporaryFile(
-        delete=True, mode="w+", dir=".", suffix=".class")
+    fb = tempfile.NamedTemporaryFile(delete=True, mode="w+", dir=".", suffix=".class")
     fb.write(f'file in "{file_30m}"\n')
     fb.write(f'file out "{merge_30m}"  single /overwrite\n')
     fb.write(f"say [INFO] Removing old output file\n")
@@ -276,8 +294,7 @@ def line_prepare_merge(source_name: str, line_i: str, QN_i: str) -> None:
     fb.write(f"sic message class s+i\n")
     fb.write(f'file in "{merge_30m}"\n')
     fb.write(f"find /all\n")
-    fb.write(
-        f'table "{merge_uvt[:-4]}" new /NOCHECK source /like "{file_uvt}"\n')
+    fb.write(f'table "{merge_uvt[:-4]}" new /NOCHECK source /like "{file_uvt}"\n')
     fb.write(f"exit\n")
     fb.flush()
     merged_folder = os.path.dirname(merge_uvt)  # get path only
@@ -288,10 +305,10 @@ def line_prepare_merge(source_name: str, line_i: str, QN_i: str) -> None:
     # os.system("cp {0}.tab {1}/.".format(outputfile, merged_folder))
     os.system(f"class -nw @ {fb.name}")
     fb.close()
-    os.system(f'cp {file_uvt} {merged_folder}/.')
+    os.system(f"cp {file_uvt} {merged_folder}/.")
 
 
-def line_reduce_30m(source_name: str, line_i: str, QN_i: str) -> None:
+def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
     """
     Function to perform a simple data reduction ot the 30m data.
     Output spectra will be stores in Ta* scale.
@@ -314,27 +331,25 @@ def line_reduce_30m(source_name: str, line_i: str, QN_i: str) -> None:
     if len(inputfiles) == 0:
         raise ValueError(f"No files found in the input directory: {inputdir}")
 
-    print(f"[INFO] Reducing line: {line_i} with QN: {QN_i}")
-    index = get_line_param(line_i, QN_i)
-    print(source_out, line_name[index][0], QN[index][0])
+    print(f"[INFO] Reducing line: {line_i} with QN: {qn_i}")
+    index = get_line_param(line_i, qn_i)
+    print(source_out, line_name[index][0], qn[index][0])
     # Get frequency
     Lid_i = Lid[index][0]
-    QN_name_i = QN[index][0]
+    qn_name_i = qn[index][0]
     line_name_i = line_name[index][0]
     freq_i = freq[index][0].astype(float) * 1e3
     dv_base = vel_width_base_30m[index][0].astype(float)
     dv = vel_width_30m[index][0].astype(float)
-    print(vlsr+0.1, dv+0.1, dv_base+0.1)
+    print(vlsr + 0.1, dv + 0.1, dv_base + 0.1)
     vel_win = "{0:.2f}  {1:.2f}".format(vlsr - dv_base, vlsr + dv_base)
     vel_ext = "{0:.2f}  {1:.2f}".format(vlsr - dv, vlsr + dv)
     # Define output
-    file_30m = get_30m_file(source_out, line_name_i,
-                            QN_name_i, Lid_i, merge=False)
+    file_30m = get_30m_file(source_out, line_name_i, qn_name_i, Lid_i, merge=False)
     # outputfile = get_30m_file(
     #     source_out, line_name[index][0], QN[index][0])
     os.system(f"rm {file_30m[:-4]}.*")
-    fb = tempfile.NamedTemporaryFile(
-        delete=True, mode="w+", dir=".", suffix=".class")
+    fb = tempfile.NamedTemporaryFile(delete=True, mode="w+", dir=".", suffix=".class")
     fb.write(f"file out {file_30m}  single\n")
     fb.write(f"say [INFO] Removing old output file\n")
     fb.write(f'say "[INFO] Making new output file: {file_30m}"\n')
@@ -388,7 +403,16 @@ def line_reduce_30m(source_name: str, line_i: str, QN_i: str) -> None:
     fb.close()
 
 
-def line_make_uvt(source_name: str, line_i: str, QN_i: str, uvsub: bool = True, selfcal: bool = False, dv: float = None, dv_min: float = None, dv_max: float = None) -> None:
+def line_make_uvt(
+    source_name: str,
+    line_i: str,
+    QN_i: str,
+    uvsub: bool = True,
+    selfcal: bool = False,
+    dv: float | None = None,
+    dv_min: float | None = None,
+    dv_max: float | None = None,
+) -> None:
     """
     Function to perform an exision of a targeted molecular line, from NOEMA data already calibrated.
     It will ensure that the 30m data use the correct frequency.
@@ -428,20 +452,16 @@ def line_make_uvt(source_name: str, line_i: str, QN_i: str, uvsub: bool = True, 
     else:
         dv_window = vel_width[index][0].astype(float)
     #
-    window_uvt = get_uvt_window(
-        source_out, Lid_i, uvsub=uvsub, selfcal=selfcal)
-    file_uvt = get_uvt_file(source_out, line_name_i,
-                            QN_name_i, Lid_i, merge=False)
+    window_uvt = get_uvt_window(source_out, Lid_i, uvsub=uvsub, selfcal=selfcal)
+    file_uvt = get_uvt_file(source_out, line_name_i, QN_name_i, Lid_i, merge=False)
     if dv is None and dv_min is not None and dv_max is not None:
         vel_win = "{0:.2f}  {1:.2f}".format(vlsr - dv_min, vlsr + dv_max)
     else:
         vel_win = "{0:.2f}  {1:.2f}".format(vlsr - dv_window, vlsr + dv_window)
     # remove previous version of the file
     os.system(f"rm {file_uvt[:-4]}.*")
-    fb = tempfile.NamedTemporaryFile(
-        delete=True, mode="w+", dir=".", suffix=".map")
-    fb.write(
-        f'modify "{window_uvt}" /frequency {name_str[index][0]} {freq_i}\n')
+    fb = tempfile.NamedTemporaryFile(delete=True, mode="w+", dir=".", suffix=".map")
+    fb.write(f'modify "{window_uvt}" /frequency {name_str[index][0]} {freq_i}\n')
     fb.write(f'let name "{window_uvt[:-4]}"\n')
     fb.write(f"let type uvt\n")
     fb.write(f"go setup\n")
