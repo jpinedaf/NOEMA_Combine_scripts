@@ -284,7 +284,7 @@ def line_prepare_merge(source_name: str, line_i: str, qn_i: str) -> None:
     fb.write(f"sic message class s-i\n")
     fb.write(f"for i 1 to found\n")
     fb.write(f"  get next\n")
-    fb.write(f"  modify linename {name_str[index][0]}\n")
+    fb.write(f"  modify linename {name_str[index]}\n")
     fb.write(f"  modify freq {freq_i}\n")
     fb.write(f"  modify source {source_out}\n")
     fb.write(f"  modify Beam_Eff /Ruze\n")
