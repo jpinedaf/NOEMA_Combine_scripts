@@ -1,0 +1,320 @@
+import pytest
+from io import StringIO
+from typing import Dict
+from datetime import datetime
+from unittest.mock import patch, MagicMock, mock_open, call
+import os
+import numpy as np
+import tempfile
+
+from noema_combine.data_handler import (
+    get_line_param,
+    get_source_param,
+    get_uvt_window,
+    get_uvt_file,
+    get_30m_file,
+    line_prepare_merge,
+    line_reduce_30m,
+    line_make_uvt,
+)
+
+
+# Tests for get_line_param
+@patch("noema_combine.data_handler.line_name", np.array(["CO", "13CO", "N2H+"]))
+@patch("noema_combine.data_handler.qn_str", np.array(["1-0", "1-0", "1-0"]))
+def test_get_line_param_with_qn_found():
+    """Test finding line index with quantum number"""
+    index = get_line_param("CO", "1-0")
+    assert index == 0
+
+
+@patch("noema_combine.data_handler.line_name", np.array(["CO", "13CO"]))
+@patch("noema_combine.data_handler.qn_str", np.array(["1-0", "1-0"]))
+def test_get_line_param_without_qn_single_entry():
+    """Test finding line index without QN when only one entry exists"""
+    index = get_line_param("13CO", None)
+    assert index == 1
+
+
+@patch("noema_combine.data_handler.line_name", np.array(["CO", "CO", "13CO"]))
+@patch("noema_combine.data_handler.qn_str", np.array(["1-0", "2-1", "1-0"]))
+def test_get_line_param_without_qn_multiple_entries_raises_error():
+    """Test that error is raised when multiple entries exist without QN"""
+    with pytest.raises(ValueError, match="Line name is not unique"):
+        get_line_param("CO", None)
+
+
+@patch("noema_combine.data_handler.line_name", np.array(["CO", "13CO"]))
+@patch("noema_combine.data_handler.qn_str", np.array(["1-0", "1-0"]))
+def test_get_line_param_not_found():
+    """Test that error is raised when line is not found"""
+    with pytest.raises(ValueError, match="Line not found in the catalogue"):
+        get_line_param("N2H+", "1-0")
+
+
+@patch("noema_combine.data_handler.line_name", np.array(["CO", "CO"]))
+@patch("noema_combine.data_handler.qn_str", np.array(["1-0", "2-1"]))
+def test_get_line_param_with_qn_second_entry():
+    """Test finding second line entry with specific QN"""
+    index = get_line_param("CO", "2-1")
+    assert index == 1
+
+
+# Tests for get_source_param
+@patch("noema_combine.data_handler.list_source_name", np.array(["B5", "NGC1333"]))
+@patch("noema_combine.data_handler.list_source_key", np.array(["b5", "ngc1333"]))
+@patch(
+    "noema_combine.data_handler.list_source_out", np.array(["B5_out", "NGC1333_out"])
+)
+@patch("noema_combine.data_handler.list_RA", np.array(["50.5", "52.3"]))
+@patch("noema_combine.data_handler.list_Dec", np.array(["30.2", "31.1"]))
+@patch("noema_combine.data_handler.list_Vlsr", np.array(["10.0", "8.5"]))
+def test_get_source_param_found():
+    """Test retrieving source parameters"""
+    result = get_source_param("B5")
+    assert result == ("B5", "b5", "B5_out", 50.5, 30.2, 10.0)
+
+
+@patch("noema_combine.data_handler.list_source_name", np.array(["B5", "NGC1333"]))
+@patch("noema_combine.data_handler.list_source_key", np.array(["b5", "ngc1333"]))
+@patch(
+    "noema_combine.data_handler.list_source_out", np.array(["B5_out", "NGC1333_out"])
+)
+@patch("noema_combine.data_handler.list_RA", np.array(["50.5", "52.3"]))
+@patch("noema_combine.data_handler.list_Dec", np.array(["30.2", "31.1"]))
+@patch("noema_combine.data_handler.list_Vlsr", np.array(["10.0", "8.5"]))
+def test_get_source_param_second_source():
+    """Test retrieving second source parameters"""
+    result = get_source_param("NGC1333")
+    assert result == ("NGC1333", "ngc1333", "NGC1333_out", 52.3, 31.1, 8.5)
+
+
+@patch("noema_combine.data_handler.list_source_name", np.array(["B5"]))
+@patch("noema_combine.data_handler.source_print", "B5, ")
+def test_get_source_param_not_found():
+    """Test that error is raised when source is not found"""
+    with pytest.raises(ValueError, match="Source .* not found in the catalogue"):
+        get_source_param("Unknown")
+
+
+# Tests for get_uvt_window
+@patch("noema_combine.data_handler.uvt_dir", "/path/to/uvt")
+def test_get_uvt_window_default():
+    """Test default uvt window filename generation"""
+    result = get_uvt_window("B5", "L09")
+    assert result == "/path/to/uvt/L09/B5_L09_uvsub.uvt"
+
+
+@patch("noema_combine.data_handler.uvt_dir", "/path/to/uvt")
+def test_get_uvt_window_no_uvsub():
+    """Test uvt window filename without uvsub"""
+    result = get_uvt_window("B5", "L09", uvsub=False)
+    assert result == "/path/to/uvt/L09/B5_L09.uvt"
+
+
+@patch("noema_combine.data_handler.uvt_dir", "/path/to/uvt")
+def test_get_uvt_window_with_selfcal():
+    """Test uvt window filename with selfcal"""
+    result = get_uvt_window("B5", "L09", selfcal=True)
+    assert result == "/path/to/uvt/L09/B5_L09_uvsub_sc.uvt"
+
+
+@patch("noema_combine.data_handler.uvt_dir", "/path/to/uvt")
+def test_get_uvt_window_no_uvsub_with_selfcal():
+    """Test uvt window filename with selfcal but no uvsub"""
+    result = get_uvt_window("B5", "L09", uvsub=False, selfcal=True)
+    assert result == "/path/to/uvt/L09/B5_L09_sc.uvt"
+
+
+@patch("noema_combine.data_handler.uvt_dir", "/data/uvt")
+def test_get_uvt_window_different_lid():
+    """Test uvt window filename with different Lid"""
+    result = get_uvt_window("NGC1333", "L11", uvsub=True, selfcal=False)
+    assert result == "/data/uvt/L11/NGC1333_L11_uvsub.uvt"
+
+
+# Tests for get_uvt_file
+@patch("noema_combine.data_handler.uvt_dir", "/path/to/uvt")
+def test_get_uvt_file_no_merge():
+    """Test uvt filename generation without merge"""
+    result = get_uvt_file("B5", "CO", "1-0", "L09", merge=False)
+    assert result == "/path/to/uvt/L09/B5_CO_1-0_L09.uvt"
+
+
+@patch("noema_combine.data_handler.uvt_dir_out", "/path/to/uvt_out")
+def test_get_uvt_file_with_merge():
+    """Test uvt filename generation with merge"""
+    result = get_uvt_file("B5", "CO", "1-0", "L09", merge=True)
+    assert result == "/path/to/uvt_out/L09/B5_CO_1-0_L09.uvt"
+
+
+@patch("noema_combine.data_handler.uvt_dir", "/data/uvt")
+def test_get_uvt_file_complex_qn():
+    """Test uvt filename with complex quantum number"""
+    result = get_uvt_file("B5", "N2H+", "J=1-0,F=2-1", "L09", merge=False)
+    assert result == "/data/uvt/L09/B5_N2H+_J=1-0,F=2-1_L09.uvt"
+
+
+# Tests for get_30m_file
+@patch("noema_combine.data_handler.dir_30m", "/path/to/30m")
+def test_get_30m_file_no_merge():
+    """Test 30m filename generation without merge"""
+    result = get_30m_file("B5", "CO", "1-0", "L09", merge=False)
+    assert result == "/path/to/30m/B5_CO_1-0.30m"
+
+
+@patch("noema_combine.data_handler.dir_30m", "/path/to/30m")
+def test_get_30m_file_with_merge():
+    """Test 30m filename generation with merge"""
+    result = get_30m_file("B5", "CO", "1-0", "L09", merge=True)
+    assert result == "/path/to/30m/B5_CO_1-0_L09.30m"
+
+
+@patch("noema_combine.data_handler.dir_30m", "/data/30m")
+def test_get_30m_file_different_molecule():
+    """Test 30m filename with different molecule"""
+    result = get_30m_file("NGC1333", "13CO", "2-1", "L11", merge=False)
+    assert result == "/data/30m/NGC1333_13CO_2-1.30m"
+
+
+# Tests for line_make_uvt
+@patch("noema_combine.data_handler.get_source_param")
+@patch("noema_combine.data_handler.get_line_param")
+@patch("noema_combine.data_handler.get_uvt_window")
+@patch("noema_combine.data_handler.get_uvt_file")
+@patch("noema_combine.data_handler.line_name", np.array(["CO"]))
+@patch("noema_combine.data_handler.QN", np.array(["1-0"]))
+@patch("noema_combine.data_handler.Lid", np.array(["L09"]))
+@patch("noema_combine.data_handler.freq", np.array(["115.271"]))
+@patch("noema_combine.data_handler.vel_width", np.array(["5.0"]))
+@patch("noema_combine.data_handler.name_str", np.array(["CO(1-0)"]))
+@patch("os.system")
+@patch("tempfile.NamedTemporaryFile")
+def test_line_make_uvt_default_parameters(
+    mock_temp,
+    mock_os,
+    mock_get_uvt_file,
+    mock_get_uvt_window,
+    mock_get_line,
+    mock_get_source,
+):
+    """Test line_make_uvt with default parameters"""
+    mock_get_source.return_value = ("B5", "b5", "B5_out", 50.5, 30.2, 10.0)
+    mock_get_line.return_value = 0
+    mock_get_uvt_window.return_value = "/uvt/L09/B5_L09_uvsub.uvt"
+    mock_get_uvt_file.return_value = "/uvt/L09/B5_CO_1-0_L09.uvt"
+    mock_file = MagicMock()
+    mock_temp.return_value.__enter__.return_value = mock_file
+    mock_file.name = "temp.map"
+
+    line_make_uvt("B5", "CO", "1-0")
+
+    mock_get_source.assert_called_once_with("B5")
+    mock_get_line.assert_called_once_with("CO", "1-0")
+    assert mock_file.write.called
+
+
+@patch("noema_combine.data_handler.get_source_param")
+@patch("noema_combine.data_handler.get_line_param")
+@patch("noema_combine.data_handler.get_uvt_window")
+@patch("noema_combine.data_handler.get_uvt_file")
+@patch("noema_combine.data_handler.line_name", np.array(["CO"]))
+@patch("noema_combine.data_handler.QN", np.array(["1-0"]))
+@patch("noema_combine.data_handler.Lid", np.array(["L09"]))
+@patch("noema_combine.data_handler.freq", np.array(["115.271"]))
+@patch("noema_combine.data_handler.vel_width", np.array(["5.0"]))
+@patch("noema_combine.data_handler.name_str", np.array(["CO(1-0)"]))
+@patch("os.system")
+@patch("tempfile.NamedTemporaryFile")
+def test_line_make_uvt_with_custom_dv(
+    mock_temp,
+    mock_os,
+    mock_get_uvt_file,
+    mock_get_uvt_window,
+    mock_get_line,
+    mock_get_source,
+):
+    """Test line_make_uvt with custom dv parameter"""
+    mock_get_source.return_value = ("B5", "b5", "B5_out", 50.5, 30.2, 10.0)
+    mock_get_line.return_value = 0
+    mock_get_uvt_window.return_value = "/uvt/L09/B5_L09_uvsub.uvt"
+    mock_get_uvt_file.return_value = "/uvt/L09/B5_CO_1-0_L09.uvt"
+    mock_file = MagicMock()
+    mock_temp.return_value.__enter__.return_value = mock_file
+    mock_file.name = "temp.map"
+
+    line_make_uvt("B5", "CO", "1-0", dv=7.0)
+
+    mock_get_source.assert_called_once_with("B5")
+    assert mock_file.write.called
+
+
+@patch("noema_combine.data_handler.get_source_param")
+@patch("noema_combine.data_handler.get_line_param")
+@patch("noema_combine.data_handler.get_uvt_window")
+@patch("noema_combine.data_handler.get_uvt_file")
+@patch("noema_combine.data_handler.line_name", np.array(["CO"]))
+@patch("noema_combine.data_handler.QN", np.array(["1-0"]))
+@patch("noema_combine.data_handler.Lid", np.array(["L09"]))
+@patch("noema_combine.data_handler.freq", np.array(["115.271"]))
+@patch("noema_combine.data_handler.vel_width", np.array(["5.0"]))
+@patch("noema_combine.data_handler.name_str", np.array(["CO(1-0)"]))
+@patch("os.system")
+@patch("tempfile.NamedTemporaryFile")
+def test_line_make_uvt_with_dv_min_max(
+    mock_temp,
+    mock_os,
+    mock_get_uvt_file,
+    mock_get_uvt_window,
+    mock_get_line,
+    mock_get_source,
+):
+    """Test line_make_uvt with dv_min and dv_max parameters"""
+    mock_get_source.return_value = ("B5", "b5", "B5_out", 50.5, 30.2, 10.0)
+    mock_get_line.return_value = 0
+    mock_get_uvt_window.return_value = "/uvt/L09/B5_L09_uvsub.uvt"
+    mock_get_uvt_file.return_value = "/uvt/L09/B5_CO_1-0_L09.uvt"
+    mock_file = MagicMock()
+    mock_temp.return_value.__enter__.return_value = mock_file
+    mock_file.name = "temp.map"
+
+    line_make_uvt("B5", "CO", "1-0", dv_min=3.0, dv_max=8.0)
+
+    mock_get_source.assert_called_once_with("B5")
+    assert mock_file.write.called
+
+
+@patch("noema_combine.data_handler.get_source_param")
+@patch("noema_combine.data_handler.get_line_param")
+@patch("noema_combine.data_handler.get_uvt_window")
+@patch("noema_combine.data_handler.get_uvt_file")
+@patch("noema_combine.data_handler.line_name", np.array(["CO"]))
+@patch("noema_combine.data_handler.QN", np.array(["1-0"]))
+@patch("noema_combine.data_handler.Lid", np.array(["L09"]))
+@patch("noema_combine.data_handler.freq", np.array(["115.271"]))
+@patch("noema_combine.data_handler.vel_width", np.array(["5.0"]))
+@patch("noema_combine.data_handler.name_str", np.array(["CO(1-0)"]))
+@patch("os.system")
+@patch("tempfile.NamedTemporaryFile")
+def test_line_make_uvt_with_selfcal(
+    mock_temp,
+    mock_os,
+    mock_get_uvt_file,
+    mock_get_uvt_window,
+    mock_get_line,
+    mock_get_source,
+):
+    """Test line_make_uvt with selfcal enabled"""
+    mock_get_source.return_value = ("B5", "b5", "B5_out", 50.5, 30.2, 10.0)
+    mock_get_line.return_value = 0
+    mock_get_uvt_window.return_value = "/uvt/L09/B5_L09_uvsub_sc.uvt"
+    mock_get_uvt_file.return_value = "/uvt/L09/B5_CO_1-0_L09.uvt"
+    mock_file = MagicMock()
+    mock_temp.return_value.__enter__.return_value = mock_file
+    mock_file.name = "temp.map"
+
+    line_make_uvt("B5", "CO", "1-0", selfcal=True)
+
+    mock_get_uvt_window.assert_called_once_with(
+        "B5_out", "L09", uvsub=True, selfcal=True
+    )
