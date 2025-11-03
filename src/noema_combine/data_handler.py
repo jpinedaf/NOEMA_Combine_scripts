@@ -5,11 +5,8 @@ from glob import glob
 import numpy as np
 from numpy.typing import NDArray
 import configparser
+from importlib.resources import files
 
-try:
-    from importlib.resources import files
-except ImportError:
-    from importlib_resources import files
 
 config = configparser.ConfigParser()
 config_file = "config.ini"
@@ -56,6 +53,7 @@ list_Vlsr: NDArray[np.str_]
     delimiter=",",
     quotechar='"',
     comments="#",
+    skiprows=1,
     unpack=True,
 )
 
@@ -96,6 +94,7 @@ vel_width_base_30m: NDArray[np.str_]
     delimiter=",",
     quotechar='"',
     comments="#",
+    skiprows=1,
     usecols=(0, 1, 2, 3, 4, 9, 10, 13, 14),
     unpack=True,
 )

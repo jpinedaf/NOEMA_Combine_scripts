@@ -1,6 +1,5 @@
 # Script to process a source and print/generate CLIC file info for MIOP uv-tables
 # import os
-import argparse
 from typing import TextIO, List, Dict, Any
 import yaml
 from datetime import datetime
@@ -261,22 +260,3 @@ def process_source(setup_name: str, config_path: str = "clic_config_MIOP.yaml") 
         )
 
     return
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Process a specific setup to genrate uv-tables with CLIC."
-    )
-    parser.add_argument(
-        "setup_name",
-        type=str,
-        help="Name of the setup to process (e.g., setup001, setup002)",
-    )
-    parser.add_argument(
-        "--config",
-        type=str,
-        default="clic_config_MIOP.yaml",
-        help="Path to the YAML configuration file",
-    )
-    args = parser.parse_args()
-    process_source(args.setup_name, config_path=args.config)

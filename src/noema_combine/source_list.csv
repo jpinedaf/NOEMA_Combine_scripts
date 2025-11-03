@@ -1,4 +1,4 @@
-#source_name, source_key, source_out, RA, Dec, Vlsr
+#source_name(Python), source_key(search in CLASS), source_out, RA, Dec, Vlsr
 B5,B5*,B5,3.794,32.865,9.0
 NGC1333,NGC1333*,NGC1333,3.4862,31.23,5.0
 PER2,PER2*,Per-emb-2,3.53806,30.830,5.0
