@@ -3,8 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# matplotlib test images
-result_images
+_version.py
 
 # C extensions
 *.so
