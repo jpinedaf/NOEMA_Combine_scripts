@@ -1,4 +1,4 @@
-#name, QN(filename), freq (GHz), mol(plot), QN(plot), Aul (log s^-1), Eul (K), cat, NOEMAbb, unit, width (km/s), 30msetup, 30mbb, 30mwidth (km/s)
+#name, QN(filename), freq (GHz), mol(plot), QN(plot), Aul (log s^-1), Eul (K), cat, NOEMAbb, unit, width (km/s), 30msetup, 30mbb, 30mwidth (km/s), 30mline (km/s)
 DCO+,1_0,72.0393122,DCO\u+,1-0,-4.16326,3.45732,CDMS,lo,L09,10.0,Setup2,LO,20,5
 CCD,1_3_2_5_2_0_1_2_3_2,72.1077205,CCD,"N=1-0,J=3/2-1/2,F=5/2-3/2",-6.06543,3.46108,CDMS,lo,L09,10.0,Setup2,LO,20,5
 CCD,1_3_2_1_2_0_1_2_1_2,72.1090504,CCD,"N=1-0,J=3/2-1/2,F=1/2-1/2",-6.1058,3.46071,CDMS,lo,L09,10.0,Setup2,LO,20,5

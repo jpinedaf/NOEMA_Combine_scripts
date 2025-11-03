@@ -13,8 +13,21 @@ readme = "README.md"
 license = { text = "MIT License" }
 
 dynamic = ["version"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
 
 [tool.setuptools_scm]
+version_file = "src/noema_combine/_version.py"
 
 [tool.setuptools]
 include-package-data = true
@@ -30,6 +43,7 @@ source = ["noema_combine"]
 
 [tool.pytest.ini_options]
 pythonpath = "src/"
+addopts = ["--ignore=src/noema_combine/_version.py"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -47,4 +61,4 @@ directory = "coverage_html_report"
 Homepage = "https://github.com/jpinedaf/NOEMA_Combine_scripts/"
 
 [tool.black]
-target-version = ['py37']
+target-version = ['py39']
