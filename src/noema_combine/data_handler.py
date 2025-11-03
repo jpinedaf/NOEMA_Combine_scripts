@@ -376,7 +376,7 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
         fb.write(f"sic message class s-i\n")
         fb.write(f"for i 1 to found\n")
         fb.write(f"  get next\n")
-        fb.write(f"  modify linename {name_str[index][0]}\n")
+        fb.write(f"  modify linename {name_str[index]}\n")
         fb.write(f"  modify freq {freq_i}\n")
         fb.write(f"  modify source {source_out}\n")
         fb.write(f"  modify projection = {ra0} {dec0} =\n")
@@ -440,16 +440,16 @@ def line_make_uvt(
 
     print(f"[INFO] Reducing line: {line_i} with qn: {qn_i}")
     index = get_line_param(line_i, qn_i)
-    print(source_out, line_name[index][0], qn[index][0])
+    print(source_out, line_name[index], qn[index])
     # Get frequency
-    Lid_i = Lid[index][0]
-    qn_name_i = qn[index][0]
-    line_name_i = line_name[index][0]
-    freq_i = freq[index][0].astype(float) * 1e3
+    Lid_i = Lid[index]
+    qn_name_i = qn[index]
+    line_name_i = line_name[index]
+    freq_i = freq[index].astype(float) * 1e3
     if dv is not None:
         dv_window = dv
     else:
-        dv_window = vel_width[index][0].astype(float)
+        dv_window = vel_width[index].astype(float)
     #
     window_uvt = get_uvt_window(source_out, Lid_i, uvsub=uvsub, selfcal=selfcal)
     file_uvt = get_uvt_file(source_out, line_name_i, qn_name_i, Lid_i, merge=False)
@@ -460,7 +460,7 @@ def line_make_uvt(
     # remove previous version of the file
     os.system(f"rm {file_uvt[:-4]}.*")
     fb = tempfile.NamedTemporaryFile(delete=True, mode="w+", dir=".", suffix=".map")
-    fb.write(f'modify "{window_uvt}" /frequency {name_str[index][0]} {freq_i}\n')
+    fb.write(f'modify "{window_uvt}" /frequency {name_str[index]} {freq_i}\n')
     fb.write(f'let name "{window_uvt[:-4]}"\n')
     fb.write(f"let type uvt\n")
     fb.write(f"go setup\n")
