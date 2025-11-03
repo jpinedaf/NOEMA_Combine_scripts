@@ -68,10 +68,10 @@ for key, item in config.items("file_handling"):
 
 # load parameters used for the preparation of the data
 line_name: NDArray[np.str_]
-QN: NDArray[np.str_]
+qn: NDArray[np.str_]
 freq: NDArray[np.str_]
 name_str: NDArray[np.str_]
-QN_str: NDArray[np.str_]
+qn_str: NDArray[np.str_]
 Lid: NDArray[np.str_]
 vel_width: NDArray[np.str_]
 vel_width_30m: NDArray[np.str_]
@@ -97,6 +97,7 @@ vel_width_base_30m: NDArray[np.str_]
     usecols=(0, 1, 2, 3, 4, 9, 10, 13, 14),
     unpack=True,
 )
+# name, qn(filename), freq (GHz), mol(plot), qn(plot), Aul (log s^-1), Eul (K), cat, NOEMAbb, unit, width (km/s), 30msetup, 30mbb, 30mwidth (km/s), 30mline (km/s)
 
 uvt_dir = config["folders"]["uvt_dir"]
 dir_30m = config["folders"]["dir_30m"]
@@ -114,10 +115,10 @@ def get_line_param(line_name_i: str, qn_i: str | None) -> int:
         idx = np.where(line_name == line_name_i)[0]
         if len(idx) > 1:
             raise ValueError(
-                f"Line name is not unique: {line_name_i}, add the Quantum number (QN)."
+                f"Line name is not unique: {line_name_i}, add the Quantum number (qn)."
             )
     else:
-        print(f"line_name: {line_name_i}, QN: {qn_i}")
+        print(f"line_name: {line_name_i}, qn: {qn_i}")
         idx = np.where((line_name == line_name_i) & (qn_str == qn_i))[0]
     if len(idx) == 0:
         raise ValueError(f"Line not found in the catalogue: {line_name_i}")
@@ -182,7 +183,7 @@ def get_uvt_file(
     """
     Function to generate the output file name for NOEMA uvt file.
     The format will be:
-    {dir_out}/{source_name}_{line_name}_{QN}_{Lid}.uvt
+    {dir_out}/{source_name}_{line_name}_{qn}_{Lid}.uvt
     where {dir_out} depends on the merge parameter.
 
     parameters:
@@ -191,7 +192,7 @@ def get_uvt_file(
         Name of the source to reduce, e.g., "B5"
     line_name: str
         Molecule to reduce, e.g., "CO", "13CO", "N2H+"
-    QN: str
+    qn: str
         Quantum numbers of the line to reduce, e.g., "1-0" or "N=1-0,J=3/2-1/2,F=1/2-1/2"
     Lid: str
         Window unit for the NOEMA data, e.g., "L09", "l11", depending on the specification from the line catalogue.
@@ -214,9 +215,9 @@ def get_30m_file(
     """
     Function to generate the output file name for the 30m data.
     The format will be:
-    {dir_30}{source_out}_{line_name}_{QN}.30m
+    {dir_30}{source_out}_{line_name}_{qn}.30m
     of
-    {dir_30}{source_out}_{line_name}_{QN}_{Lid}.30m
+    {dir_30}{source_out}_{line_name}_{qn}_{Lid}.30m
     depending on the merge parameter.
 
     parameters:
@@ -225,7 +226,7 @@ def get_30m_file(
         Name of the source to reduce, e.g., "B5"
     line_name: str
         Molecule to reduce, e.g., "CO", "13CO", "N2H+"
-    QN: str
+    qn: str
         Quantum numbers of the line to reduce, e.g., "1-0" or "N=1-0,J=3/2-1/2,F=1/2-1/2"
     Lid: str
         Window unit for the NOEMA data, e.g., "L09", "l11", depending on the specification from the line catalogue.
@@ -253,17 +254,17 @@ def line_prepare_merge(source_name: str, line_i: str, qn_i: str) -> None:
         Name of the source to reduce, e.g., "B5"
     line: str
         Molecule to reduce, e.g., "CO", "13CO", "N2H+"
-    QN: str
+    qn: str
         Quantum numbers of the line to reduce, e.g., "1-0" or "N=1-0,J=3/2-1/2,F=1/2-1/2"
     """
     _, _, source_out, _, _, _ = get_source_param(source_name)
 
-    print(f"[INFO] Reducing line: {line_i} with QN: {qn_i}")
+    print(f"[INFO] Reducing line: {line_i} with qn: {qn_i}")
     index = get_line_param(line_i, qn_i)
-    qn_name_i = qn[index][0]
-    line_name_i = line_name[index][0]
-    freq_i = freq[index][0].astype(float) * 1e3
-    Lid_i = Lid[index][0]
+    qn_name_i = qn[index]
+    line_name_i = line_name[index]
+    freq_i = freq[index].astype(float) * 1e3
+    Lid_i = Lid[index]
     file_uvt = get_uvt_file(source_out, line_name_i, qn_name_i, Lid_i, merge=False)
     merge_uvt = get_uvt_file(source_out, line_name_i, qn_name_i, Lid_i, merge=True)
 
@@ -318,7 +319,7 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
         Name of the source to reduce, e.g., "B5"
     line_i: str
         Molecule to reduce, e.g., "CO", "13CO", "N2H+"
-    QN_i: str
+    qn_i: str
         Quantum numbers of the line to reduce, e.g., "1-0" or "N=1-0,J=3/2-1/2,F=1/2-1/2"
     """
     _, source_find, source_out, ra0, dec0, vlsr = get_source_param(source_name)
@@ -329,23 +330,23 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
     if len(inputfiles) == 0:
         raise ValueError(f"No files found in the input directory: {inputdir}")
 
-    print(f"[INFO] Reducing line: {line_i} with QN: {qn_i}")
+    print(f"[INFO] Reducing line: {line_i} with qn: {qn_i}")
     index = get_line_param(line_i, qn_i)
-    print(source_out, line_name[index][0], qn[index][0])
+    print(source_out, line_name[index], qn[index])
     # Get frequency
-    Lid_i = Lid[index][0]
-    qn_name_i = qn[index][0]
-    line_name_i = line_name[index][0]
-    freq_i = freq[index][0].astype(float) * 1e3
-    dv_base = vel_width_base_30m[index][0].astype(float)
-    dv = vel_width_30m[index][0].astype(float)
+    Lid_i = Lid[index]
+    qn_name_i = qn[index]
+    line_name_i = line_name[index]
+    freq_i = freq[index].astype(float) * 1e3
+    dv_base = vel_width_base_30m[index].astype(float)
+    dv = vel_width_30m[index].astype(float)
     print(vlsr + 0.1, dv + 0.1, dv_base + 0.1)
     vel_win = "{0:.2f}  {1:.2f}".format(vlsr - dv_base, vlsr + dv_base)
     vel_ext = "{0:.2f}  {1:.2f}".format(vlsr - dv, vlsr + dv)
     # Define output
     file_30m = get_30m_file(source_out, line_name_i, qn_name_i, Lid_i, merge=False)
     # outputfile = get_30m_file(
-    #     source_out, line_name[index][0], QN[index][0])
+    #     source_out, line_name[index][0], qn[index][0])
     os.system(f"rm {file_30m[:-4]}.*")
     fb = tempfile.NamedTemporaryFile(delete=True, mode="w+", dir=".", suffix=".class")
     fb.write(f"file out {file_30m}  single\n")
@@ -404,7 +405,7 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
 def line_make_uvt(
     source_name: str,
     line_i: str,
-    QN_i: str,
+    qn_i: str,
     uvsub: bool = True,
     selfcal: bool = False,
     dv: float | None = None,
@@ -422,7 +423,7 @@ def line_make_uvt(
         Name of the source to reduce, e.g., "B5"
     line_i: str
         Molecule to reduce, e.g., "CO", "13CO", "N2H+"
-    QN_i: str
+    qn_i: str
         Quantum numbers of the line to reduce, e.g., "1-0" or "N=1-0,J=3/2-1/2,F=1/2-1/2"
     uvsub: bool
         If True, the file will include '_uvsub' in the name.
@@ -437,12 +438,12 @@ def line_make_uvt(
     """
     _, _, source_out, _, _, vlsr = get_source_param(source_name)
 
-    print(f"[INFO] Reducing line: {line_i} with QN: {QN_i}")
-    index = get_line_param(line_i, QN_i)
-    print(source_out, line_name[index][0], QN[index][0])
+    print(f"[INFO] Reducing line: {line_i} with qn: {qn_i}")
+    index = get_line_param(line_i, qn_i)
+    print(source_out, line_name[index][0], qn[index][0])
     # Get frequency
     Lid_i = Lid[index][0]
-    QN_name_i = QN[index][0]
+    qn_name_i = qn[index][0]
     line_name_i = line_name[index][0]
     freq_i = freq[index][0].astype(float) * 1e3
     if dv is not None:
@@ -451,7 +452,7 @@ def line_make_uvt(
         dv_window = vel_width[index][0].astype(float)
     #
     window_uvt = get_uvt_window(source_out, Lid_i, uvsub=uvsub, selfcal=selfcal)
-    file_uvt = get_uvt_file(source_out, line_name_i, QN_name_i, Lid_i, merge=False)
+    file_uvt = get_uvt_file(source_out, line_name_i, qn_name_i, Lid_i, merge=False)
     if dv is None and dv_min is not None and dv_max is not None:
         vel_win = "{0:.2f}  {1:.2f}".format(vlsr - dv_min, vlsr + dv_max)
     else:
