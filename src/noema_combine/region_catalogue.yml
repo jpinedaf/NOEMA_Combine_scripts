@@ -1,0 +1,275 @@
+L1448N:
+  RA0: "3:25:36.44"
+  Dec0: "30:45:18.3"
+  height: "33 arcsec"
+  width: "30 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "L1448N"
+  source_out: "L1448N"
+B5-IRS1:
+  RA0: "03:47:41.591"
+  Dec0: "32:51:43.672"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "B5*"
+  source_out: "B5-IRS1"
+L1448IRS3A:
+  RA0: "03:25:36.499"
+  Dec0: "30:45:21.880"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "L1448IRS3A"
+  source_out: "L1448IRS3A"
+L1448-IRS3B:
+  RA0: "03:25:36.379"
+  Dec0: "30:45:14.728"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "L1448IRS3B"
+  source_out: "L1448IRS3B"
+L1448C:
+  RA0: "03:25:38.875"
+  Dec0: "30:44:05.283"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "L1448C"
+  source_out: "L1448C"
+Per-emb-2:
+  RA0: "03:32:17.928"
+  Dec0: "30:49:47.825"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per-emb-2"
+  source_out: "Per-emb-2"
+Per-emb-5:
+  RA0: "03:31:20.939"
+  Dec0: "30:45:30.273"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per-emb-5"
+  source_out: "Per-emb-5"
+Per-emb-8:
+  RA0: "03:44:43.982"
+  Dec0: "32:01:35.210"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per8"
+  source_out: "Per-emb-8"
+Per-emb-18:
+  RA0: "03:29:11.258"
+  Dec0: "31:18:31.073"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per18"
+  source_out: "Per-emb-18"
+Per-emb-22:
+  RA0: "03:25:22.409"
+  Dec0: "30:45:13.258"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per22"
+  source_out: "Per-emb-22"
+Per-emb-29:
+  RA0: "03:33:17.877"
+  Dec0: "31:09:31.817"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per29"
+  source_out: "Per-emb-29"
+Per-emb-30:
+  RA0: "03:33:27.303"
+  Dec0: "31:07:10.160"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per30"
+  source_out: "Per-emb-30"
+Per-emb-50:
+  RA0: "03:29:07.768"
+  Dec0: "31:21:57.128"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per50"
+  source_out: "Per-emb-50"
+Per-emb-62:
+  RA0: "03:44:12.977"
+  Dec0: "32:01:35.419"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "Per62"
+  source_out: "Per-emb-62"
+B1-bN:
+  RA0: "03:33:21.209"
+  Dec0: "31:07:43.665"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "B1bN"
+  source_out: "B1-bN"
+B1-bS:
+  RA0: "03:33:21.355"
+  Dec0: "31:07:26.372"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "B1bS"
+  source_out: "B1-bS"
+HH211:
+  RA0: "03:43:56.806"
+  Dec0: "32:00:50.202"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "HH211"
+  source_out: "HH211"
+IC348MMS:
+  RA0: "03:43:57.065"
+  Dec0: "32:03:04.788"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "IC348MMS"
+  source_out: "IC348MMS"
+IRAS2A:
+  RA0: "03:28:55.569"
+  Dec0: "31:14:37.025"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "IRAS2A"
+  source_out: "IRAS2A"
+IRAS2B:
+  RA0: "03:28:57.374"
+  Dec0: "31:14:15.772"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "IRAS2B"
+  source_out: "IRAS2B"
+IRAS4B:
+  RA0: "03:29:12.016"
+  Dec0: "31:13:08.031"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "IRAS4B"
+  source_out: "IRAS4B"
+IRAS4C:
+  RA0: "03:29:13.548"
+  Dec0: "31:13:58.150"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "IRAS4C"
+  source_out: "IRAS4C"
+L1448NW:
+  RA0: "03:25:35.671"
+  Dec0: "30:45:34.193"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "L1448NW"
+  source_out: "L1448NW"
+SVS13A:
+  RA0: "03:29:03.764"
+  Dec0: "31:16:03.808"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "SVS13A"
+  source_out: "SVS13A"
+SVS13B:
+  RA0: "03:29:03.078"
+  Dec0: "31:15:51.740"
+  height: "40 arcsec"
+  width: "40 arcsec"
+  fig_width: 6.0
+  fig_height: 6.0
+  Vlsr: 9.0
+  source_30m: "SVS13B"
+  source_out: "SVS13B"
+# sources:
+#   B5:
+#     source_key: "B5*"
+#     source_out: "B5"
+#     RA: 3.794
+#     Dec: 32.865
+#     Vlsr: 9.0
+#   NGC1333:
+#     source_key: "NGC1333*"
+#     source_out: "NGC1333"
+#     RA: 3.4862
+#     Dec: 31.23
+#     Vlsr: 5.0
+#   PER2:
+#     source_key: "PER2*"
+#     source_out: "Per-emb-2"
+#     RA: 3.53806
+#     Dec: 30.83
+#     Vlsr: 5.0
+#   CLOUDH:
+#     source_key: "CLOUDH*"
+#     source_out: "CloudH"
+#     RA: 18.9521
+#     Dec: 2.1775
+#     Vlsr: 45.0

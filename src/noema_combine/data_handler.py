@@ -1,10 +1,12 @@
 import tempfile
 import os
 from glob import glob
+import yaml
 import numpy as np
 from numpy.typing import NDArray
 import configparser
 from importlib.resources import files
+from typing import Any
 
 
 config = configparser.ConfigParser()
@@ -39,26 +41,28 @@ list_RA: NDArray[np.str_]
 list_Dec: NDArray[np.str_]
 list_Vlsr: NDArray[np.str_]
 
-(
-    list_source_name,
-    list_source_key,
-    list_source_out,
-    list_RA,
-    list_Dec,
-    list_Vlsr,
-) = np.loadtxt(
-    file_source_catalogue,
-    dtype="U",
-    delimiter=",",
-    quotechar='"',
-    comments="#",
-    skiprows=1,
-    unpack=True,
-)
+# (
+#     list_source_name,
+#     list_source_key,
+#     list_source_out,
+#     list_RA,
+#     list_Dec,
+#     list_Vlsr,
+# ) = np.loadtxt(
+#     file_source_catalogue,
+#     dtype="U",
+#     delimiter=",",
+#     quotechar='"',
+#     comments="#",
+#     skiprows=1,
+#     unpack=True,
+# )
 
-source_print = ""
-for key_i in list_source_name:
-    source_print += key_i + ", "
+with open(file_source_catalogue, "r") as fh:
+    region_catalogue: dict[str, dict[str, str]] = yaml.safe_load(fh)
+# source_print = ""
+# for key_i in list_source_name:
+#     source_print += key_i + ", "
 
 ignorefiles: list[str] = []
 for key, item in config.items("file_handling"):
@@ -131,19 +135,25 @@ def get_source_param(source_name: str) -> tuple[str, str, str, float, float, flo
     It returns the values in the catalogue for the source.
     """
     print(f"source_name: {source_name}")
-    idx = np.where((source_name == list_source_name))[0]
-    if len(idx) == 0:
-        raise ValueError(
-            f"Source {source_name} not found in the catalogue: {source_print}"
-        )
+    try:
+        region_catalogue[source_name]
+    except KeyError:
+        raise ValueError(f"Region '{source_name}' not found in region_catalogue")
+
+    # idx = np.where((source_name == list_source_name))[0]
+    # if len(idx) == 0:
+    #     raise ValueError(
+    #         f"Source {source_name} not found in the catalogue: {source_print}"
+    #     )
     # return idx
+
     return (
-        list_source_name[idx][0],
-        list_source_key[idx][0],
-        list_source_out[idx][0],
-        list_RA[idx][0].astype(float),
-        list_Dec[idx][0].astype(float),
-        list_Vlsr[idx][0].astype(float),
+        source_name,
+        region_catalogue[source_name]["source_30m"],
+        region_catalogue[source_name]["source_out"],
+        float(region_catalogue[source_name]["RA0"]),
+        float(region_catalogue[source_name]["Dec0"]),
+        float(region_catalogue[source_name]["Vlsr"]),
     )
 
 

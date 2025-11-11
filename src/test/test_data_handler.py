@@ -61,39 +61,74 @@ def test_get_line_param_with_qn_second_entry():
 
 
 # Tests for get_source_param
-@patch("noema_combine.data_handler.list_source_name", np.array(["B5", "NGC1333"]))
-@patch("noema_combine.data_handler.list_source_key", np.array(["b5", "ngc1333"]))
-@patch(
-    "noema_combine.data_handler.list_source_out", np.array(["B5_out", "NGC1333_out"])
+@patch.dict(
+    "noema_combine.data_handler.region_catalogue",
+    {
+        "B5": {
+            "source_30m": "B5",
+            "source_out": "B5_out",
+            "RA0": "50.5",
+            "Dec0": "30.2",
+            "Vlsr": "10.0",
+        }
+    },
+    clear=True,
 )
-@patch("noema_combine.data_handler.list_RA", np.array(["50.5", "52.3"]))
-@patch("noema_combine.data_handler.list_Dec", np.array(["30.2", "31.1"]))
-@patch("noema_combine.data_handler.list_Vlsr", np.array(["10.0", "8.5"]))
 def test_get_source_param_found():
     """Test retrieving source parameters"""
     result = get_source_param("B5")
-    assert result == ("B5", "b5", "B5_out", 50.5, 30.2, 10.0)
+    assert result == ("B5", "B5", "B5_out", 50.5, 30.2, 10.0)
 
 
-@patch("noema_combine.data_handler.list_source_name", np.array(["B5", "NGC1333"]))
-@patch("noema_combine.data_handler.list_source_key", np.array(["b5", "ngc1333"]))
-@patch(
-    "noema_combine.data_handler.list_source_out", np.array(["B5_out", "NGC1333_out"])
+@patch.dict(
+    "noema_combine.data_handler.region_catalogue",
+    {
+        "B5": {
+            "source_30m": "B5",
+            "source_out": "B5_out",
+            "RA0": "50.5",
+            "Dec0": "30.2",
+            "Vlsr": "10.0",
+        },
+        "NGC1333": {
+            "source_30m": "NGC1333",
+            "source_out": "NGC1333_out",
+            "RA0": "52.3",
+            "Dec0": "31.1",
+            "Vlsr": "8.5",
+        },
+    },
+    clear=True,
 )
-@patch("noema_combine.data_handler.list_RA", np.array(["50.5", "52.3"]))
-@patch("noema_combine.data_handler.list_Dec", np.array(["30.2", "31.1"]))
-@patch("noema_combine.data_handler.list_Vlsr", np.array(["10.0", "8.5"]))
 def test_get_source_param_second_source():
     """Test retrieving second source parameters"""
     result = get_source_param("NGC1333")
-    assert result == ("NGC1333", "ngc1333", "NGC1333_out", 52.3, 31.1, 8.5)
+    assert result == ("NGC1333", "NGC1333", "NGC1333_out", 52.3, 31.1, 8.5)
 
 
-@patch("noema_combine.data_handler.list_source_name", np.array(["B5"]))
-@patch("noema_combine.data_handler.source_print", "B5, ")
+@patch.dict(
+    "noema_combine.data_handler.region_catalogue",
+    {
+        "B5": {
+            "source_30m": "B5",
+            "source_out": "B5_out",
+            "RA0": "50.5",
+            "Dec0": "30.2",
+            "Vlsr": "10.0",
+        },
+        "NGC1333": {
+            "source_30m": "NGC1333",
+            "source_out": "NGC1333_out",
+            "RA0": "52.3",
+            "Dec0": "31.1",
+            "Vlsr": "8.5",
+        },
+    },
+    clear=True,
+)
 def test_get_source_param_not_found():
     """Test that error is raised when source is not found"""
-    with pytest.raises(ValueError, match="Source .* not found in the catalogue"):
+    with pytest.raises(ValueError, match="Region .* not found in region_catalogue"):
         get_source_param("Unknown")
 
 
@@ -179,11 +214,12 @@ def test_get_30m_file_different_molecule():
 
 # Tests for line_make_uvt
 @patch("noema_combine.data_handler.get_source_param")
+@patch("noema_combine.data_handler.get_source_param")
 @patch("noema_combine.data_handler.get_line_param")
 @patch("noema_combine.data_handler.get_uvt_window")
 @patch("noema_combine.data_handler.get_uvt_file")
 @patch("noema_combine.data_handler.line_name", np.array(["CO"]))
-@patch("noema_combine.data_handler.QN", np.array(["1-0"]))
+@patch("noema_combine.data_handler.qn", np.array(["1-0"]))
 @patch("noema_combine.data_handler.Lid", np.array(["L09"]))
 @patch("noema_combine.data_handler.freq", np.array(["115.271"]))
 @patch("noema_combine.data_handler.vel_width", np.array(["5.0"]))
