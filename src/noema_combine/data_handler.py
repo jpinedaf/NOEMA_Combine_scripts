@@ -89,7 +89,8 @@ vel_width_base_30m: NDArray[np.str_]
 uvt_dir = config["folders"]["uvt_dir"]
 dir_30m = config["folders"]["dir_30m"]
 uvt_dir_out = config["folders"]["uvt_dir_out"]
-inputdir = config["folders"]["inputdir"]
+inputdir_str = config["folders"]["inputdir"]
+inputdir: list[str] = [path.strip() for path in inputdir_str.split(",")]
 
 
 def get_line_param(line_name_i: str, qn_i: str | None) -> int:
@@ -357,11 +358,16 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
     _, source_find, source_out, ra0, dec0, vlsr = get_source_param(source_name)
 
     freq_corr = 1 - vlsr / 3e5
-    # get data files list
-    inputfiles = glob("*.30m", root_dir=inputdir)
+    # Get data files list from all input directories
+    inputfiles: list[str] = []
+    for input_dir in inputdir:
+        # Use glob to find all .30m files in each directory
+        files_in_dir = glob(os.path.join(input_dir, "*.30m"))
+        inputfiles.extend(files_in_dir)
     if len(inputfiles) == 0:
         raise ValueError(f"No files found in the input directory: {inputdir}")
 
+    print(f"[INFO] Found {len(inputfiles)} files in input directories")
     print(f"[INFO] Reducing line: {line_i} with qn: {qn_i}")
     index = get_line_param(line_i, qn_i)
     print(source_out, line_name[index], qn[index])
@@ -386,8 +392,8 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
     fb.write(f'say "[INFO] Making new output file: {file_30m}"\n')
     ####
     # Loop through files - one file per date
-    for input_filename in inputfiles:
-        inputfile = os.path.join(inputdir, input_filename)
+    for inputfile in inputfiles:
+        # inputfile = os.path.join(inputdir, input_filename)
         # check everyfile to be ignored if it is the current file
         for ignorefile in ignorefiles:
             if ignorefile in inputfile:
