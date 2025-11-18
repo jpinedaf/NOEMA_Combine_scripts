@@ -1,6 +1,6 @@
 L1448N:
-  RA0: "3:25:36.44"
-  Dec0: "30:45:18.3"
+  RA0: "3h25m36.44s"
+  Dec0: "30d45m18.3s"
   height: "33 arcsec"
   width: "30 arcsec"
   fig_width: 6.0
@@ -9,8 +9,8 @@ L1448N:
   source_30m: "L1448N"
   source_out: "L1448N"
 B5-IRS1:
-  RA0: "03:47:41.591"
-  Dec0: "32:51:43.672"
+  RA0: "03h47m41.591s"
+  Dec0: "32d51m43.672s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -19,8 +19,8 @@ B5-IRS1:
   source_30m: "B5*"
   source_out: "B5-IRS1"
 L1448IRS3A:
-  RA0: "03:25:36.499"
-  Dec0: "30:45:21.880"
+  RA0: "03h25m36.499s"
+  Dec0: "30d45m21.880s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -29,8 +29,8 @@ L1448IRS3A:
   source_30m: "L1448IRS3A"
   source_out: "L1448IRS3A"
 L1448-IRS3B:
-  RA0: "03:25:36.379"
-  Dec0: "30:45:14.728"
+  RA0: "03h25m36.379s"
+  Dec0: "30d45m14.728s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -39,8 +39,8 @@ L1448-IRS3B:
   source_30m: "L1448IRS3B"
   source_out: "L1448IRS3B"
 L1448C:
-  RA0: "03:25:38.875"
-  Dec0: "30:44:05.283"
+  RA0: "03h25m38.875s"
+  Dec0: "30d44m05.283s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -49,8 +49,8 @@ L1448C:
   source_30m: "L1448C"
   source_out: "L1448C"
 Per-emb-2:
-  RA0: "03:32:17.928"
-  Dec0: "30:49:47.825"
+  RA0: "03h32m17.928s"
+  Dec0: "30d49m47.825s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -59,8 +59,8 @@ Per-emb-2:
   source_30m: "Per-emb-2"
   source_out: "Per-emb-2"
 Per-emb-5:
-  RA0: "03:31:20.939"
-  Dec0: "30:45:30.273"
+  RA0: "03h31m20.939s"
+  Dec0: "30d45m30.273s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -69,8 +69,8 @@ Per-emb-5:
   source_30m: "Per-emb-5"
   source_out: "Per-emb-5"
 Per-emb-8:
-  RA0: "03:44:43.982"
-  Dec0: "32:01:35.210"
+  RA0: "03h44m43.982s"
+  Dec0: "32d01m35.210s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -79,8 +79,8 @@ Per-emb-8:
   source_30m: "Per8"
   source_out: "Per-emb-8"
 Per-emb-18:
-  RA0: "03:29:11.258"
-  Dec0: "31:18:31.073"
+  RA0: "03h29m11.258s"
+  Dec0: "31d18m31.073s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -89,8 +89,8 @@ Per-emb-18:
   source_30m: "Per18"
   source_out: "Per-emb-18"
 Per-emb-22:
-  RA0: "03:25:22.409"
-  Dec0: "30:45:13.258"
+  RA0: "03h25m22.409s"
+  Dec0: "30d45m13.258s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -99,8 +99,8 @@ Per-emb-22:
   source_30m: "Per22"
   source_out: "Per-emb-22"
 Per-emb-29:
-  RA0: "03:33:17.877"
-  Dec0: "31:09:31.817"
+  RA0: "03h33m17.877s"
+  Dec0: "31d09m31.817s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -109,8 +109,8 @@ Per-emb-29:
   source_30m: "Per29"
   source_out: "Per-emb-29"
 Per-emb-30:
-  RA0: "03:33:27.303"
-  Dec0: "31:07:10.160"
+  RA0: "03h33m27.303s"
+  Dec0: "31d07m10.160s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -119,8 +119,8 @@ Per-emb-30:
   source_30m: "Per30"
   source_out: "Per-emb-30"
 Per-emb-50:
-  RA0: "03:29:07.768"
-  Dec0: "31:21:57.128"
+  RA0: "03h29m07.768s"
+  Dec0: "31d21m57.128s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -129,8 +129,8 @@ Per-emb-50:
   source_30m: "Per50"
   source_out: "Per-emb-50"
 Per-emb-62:
-  RA0: "03:44:12.977"
-  Dec0: "32:01:35.419"
+  RA0: "03h44m12.977s"
+  Dec0: "32d01m35.419s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -139,8 +139,8 @@ Per-emb-62:
   source_30m: "Per62"
   source_out: "Per-emb-62"
 B1-bN:
-  RA0: "03:33:21.209"
-  Dec0: "31:07:43.665"
+  RA0: "03h33m21.209s"
+  Dec0: "31d07m43.665s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -149,8 +149,8 @@ B1-bN:
   source_30m: "B1bN"
   source_out: "B1-bN"
 B1-bS:
-  RA0: "03:33:21.355"
-  Dec0: "31:07:26.372"
+  RA0: "03h33m21.355s"
+  Dec0: "31d07m26.372s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -159,8 +159,8 @@ B1-bS:
   source_30m: "B1bS"
   source_out: "B1-bS"
 HH211:
-  RA0: "03:43:56.806"
-  Dec0: "32:00:50.202"
+  RA0: "03h43m56.806s"
+  Dec0: "32d00m50.202s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -169,8 +169,8 @@ HH211:
   source_30m: "HH211"
   source_out: "HH211"
 IC348MMS:
-  RA0: "03:43:57.065"
-  Dec0: "32:03:04.788"
+  RA0: "03h43m57.065s"
+  Dec0: "32d03m04.788s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -179,8 +179,8 @@ IC348MMS:
   source_30m: "IC348MMS"
   source_out: "IC348MMS"
 IRAS2A:
-  RA0: "03:28:55.569"
-  Dec0: "31:14:37.025"
+  RA0: "03h28m55.569s"
+  Dec0: "31d14m37.025s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -189,8 +189,8 @@ IRAS2A:
   source_30m: "IRAS2A"
   source_out: "IRAS2A"
 IRAS2B:
-  RA0: "03:28:57.374"
-  Dec0: "31:14:15.772"
+  RA0: "03h28m57.374s"
+  Dec0: "31d14m15.772s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -199,8 +199,8 @@ IRAS2B:
   source_30m: "IRAS2B"
   source_out: "IRAS2B"
 IRAS4B:
-  RA0: "03:29:12.016"
-  Dec0: "31:13:08.031"
+  RA0: "03h29m12.016s"
+  Dec0: "31d13m08.031s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -209,8 +209,8 @@ IRAS4B:
   source_30m: "IRAS4B"
   source_out: "IRAS4B"
 IRAS4C:
-  RA0: "03:29:13.548"
-  Dec0: "31:13:58.150"
+  RA0: "03h29m13.548s"
+  Dec0: "31d13m58.150s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -219,8 +219,8 @@ IRAS4C:
   source_30m: "IRAS4C"
   source_out: "IRAS4C"
 L1448NW:
-  RA0: "03:25:35.671"
-  Dec0: "30:45:34.193"
+  RA0: "03h25m35.671s"
+  Dec0: "30d45m34.193s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -229,8 +229,8 @@ L1448NW:
   source_30m: "L1448NW"
   source_out: "L1448NW"
 SVS13A:
-  RA0: "03:29:03.764"
-  Dec0: "31:16:03.808"
+  RA0: "03h29m03.764s"
+  Dec0: "31d16m03.808s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0
@@ -239,8 +239,8 @@ SVS13A:
   source_30m: "SVS13A"
   source_out: "SVS13A"
 SVS13B:
-  RA0: "03:29:03.078"
-  Dec0: "31:15:51.740"
+  RA0: "03h29m03.078s"
+  Dec0: "31d15m51.740s"
   height: "40 arcsec"
   width: "40 arcsec"
   fig_width: 6.0

@@ -6,7 +6,10 @@ import numpy as np
 from numpy.typing import NDArray
 import configparser
 from importlib.resources import files
-from typing import Any
+from astropy.coordinates import SkyCoord
+import astropy.units as u
+
+# from typing import Any
 
 
 config = configparser.ConfigParser()
@@ -41,28 +44,8 @@ list_RA: NDArray[np.str_]
 list_Dec: NDArray[np.str_]
 list_Vlsr: NDArray[np.str_]
 
-# (
-#     list_source_name,
-#     list_source_key,
-#     list_source_out,
-#     list_RA,
-#     list_Dec,
-#     list_Vlsr,
-# ) = np.loadtxt(
-#     file_source_catalogue,
-#     dtype="U",
-#     delimiter=",",
-#     quotechar='"',
-#     comments="#",
-#     skiprows=1,
-#     unpack=True,
-# )
-
 with open(file_source_catalogue, "r") as fh:
     region_catalogue: dict[str, dict[str, str]] = yaml.safe_load(fh)
-# source_print = ""
-# for key_i in list_source_name:
-#     source_print += key_i + ", "
 
 ignorefiles: list[str] = []
 for key, item in config.items("file_handling"):
@@ -131,8 +114,27 @@ def get_line_param(line_name_i: str, qn_i: str | None) -> int:
 
 def get_source_param(source_name: str) -> tuple[str, str, str, float, float, float]:
     """
-    Function to find the index of the source in the catalogue.
+    Function to reach the source in the catalogue.
     It returns the values in the catalogue for the source.
+
+    parameters:
+    -----------
+    source_name: str
+        Name of the source to reduce, e.g., "B5-IRS1"
+    returns:
+    --------
+    source_name: str
+        Name of the source to reduce, e.g., "B5-IRS1"
+    source_30m: str
+        Name of the source in the 30m observations, e.g., "B5", or "B5-Box1 B5-Box2"
+    source_out: str
+        Name of the source for the output files, e.g., "B5"
+    ra0: float
+        Right Ascension of the source in degrees.
+    dec0: float
+        Declination of the source in degrees.
+    vlsr: float
+        LSR velocity of the source in km/s.
     """
     print(f"source_name: {source_name}")
     try:
@@ -140,19 +142,39 @@ def get_source_param(source_name: str) -> tuple[str, str, str, float, float, flo
     except KeyError:
         raise ValueError(f"Region '{source_name}' not found in region_catalogue")
 
-    # idx = np.where((source_name == list_source_name))[0]
-    # if len(idx) == 0:
-    #     raise ValueError(
-    #         f"Source {source_name} not found in the catalogue: {source_print}"
-    #     )
-    # return idx
-
+    if (":" in region_catalogue[source_name]["RA0"]) and (
+        ":" in region_catalogue[source_name]["Dec0"]
+    ):
+        skycoord: SkyCoord = SkyCoord(
+            region_catalogue[source_name]["RA0"]
+            + " "
+            + region_catalogue[source_name]["Dec0"],
+            frame="icrs",
+            unit=(u.hourangle, u.deg),
+        )
+    elif ("h" in region_catalogue[source_name]["RA0"]) and (
+        "d" in region_catalogue[source_name]["Dec0"]
+    ):
+        skycoord: SkyCoord = SkyCoord(
+            ra=region_catalogue[source_name]["RA0"],
+            dec=region_catalogue[source_name]["Dec0"],
+            frame="icrs",
+        )
+    else:
+        skycoord: SkyCoord = SkyCoord(
+            ra=float(region_catalogue[source_name]["RA0"]),
+            dec=float(region_catalogue[source_name]["Dec0"]),
+            frame="icrs",
+            unit=(u.deg, u.deg),
+        )
+    ra_cat: float = skycoord.ra.degree
+    dec_cat: float = skycoord.dec.degree
     return (
         source_name,
         region_catalogue[source_name]["source_30m"],
         region_catalogue[source_name]["source_out"],
-        float(region_catalogue[source_name]["RA0"]),
-        float(region_catalogue[source_name]["Dec0"]),
+        ra_cat,
+        dec_cat,
         float(region_catalogue[source_name]["Vlsr"]),
     )
 
@@ -389,7 +411,8 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
         fb.write(f"  modify linename {name_str[index]}\n")
         fb.write(f"  modify freq {freq_i}\n")
         fb.write(f"  modify source {source_out}\n")
-        fb.write(f"  modify projection = {ra0} {dec0} =\n")
+        # RA and Dec centers are in hrs and degrees, respectively
+        fb.write(f"  modify projection = {ra0/15.0} {dec0} =\n")
         fb.write(f"  modify telescope 30M-MRT\n")
         fb.write(f"  extract {vel_ext} velocity\n")  # cut out spectra
         fb.write(f"  set window {vel_win}\n")  # define baseline window
