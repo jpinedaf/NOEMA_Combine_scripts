@@ -151,7 +151,7 @@ def get_source_param(source_name: str) -> tuple[str, str, str, float, float, flo
             + " "
             + region_catalogue[source_name]["Dec0"],
             frame="icrs",
-            unit=(u.hourangle, u.deg),
+            unit=(u.hourangle, u.deg),  # type: ignore
         )
     elif ("h" in region_catalogue[source_name]["RA0"]) and (
         "d" in region_catalogue[source_name]["Dec0"]
@@ -166,10 +166,10 @@ def get_source_param(source_name: str) -> tuple[str, str, str, float, float, flo
             ra=float(region_catalogue[source_name]["RA0"]),
             dec=float(region_catalogue[source_name]["Dec0"]),
             frame="icrs",
-            unit=(u.deg, u.deg),
+            unit=(u.deg, u.deg),  # type: ignore
         )
-    ra_cat: float = skycoord.ra.degree
-    dec_cat: float = skycoord.dec.degree
+    ra_cat: float = skycoord.ra.degree  # type: ignore
+    dec_cat: float = skycoord.dec.degree  # type: ignore
     return (
         source_name,
         region_catalogue[source_name]["source_30m"],
