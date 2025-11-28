@@ -202,10 +202,10 @@ def get_uvt_window(
         If True, the file will include '_sc' in the name.
     """
     extension = ""
-    if uvsub == True:
-        extension += "_uvsub"
     if selfcal == True:
         extension += "_sc"
+    if uvsub == True:
+        extension += "_contsub"
     uvt_filename = os.path.join(uvt_dir, Lid, f"{source_name}_{Lid}{extension}.uvt")
     return uvt_filename
 
@@ -404,6 +404,9 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
         # Load file and det defaults
         fb.write(f'file in "{inputfile}"\n')
         fb.write(f"set source {source_find}\n")
+        fb.write(f"set offset 0 0\n")
+        fb.write(f"set angle sec\n")
+        fb.write(f"set match 500\n")
         fb.write(f"set tele *\n")
         fb.write(f"set line *\n")
         # Open and check file
