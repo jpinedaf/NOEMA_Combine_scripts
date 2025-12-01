@@ -28,6 +28,10 @@ if os.path.isfile(file_source_catalogue) == False:
             f"File not found: {config['catalogues']['source_catalogue']}"
         )
 
+# file extenstions from congig file
+selfcal_ext = config.get("file_extensions", "selfcal", fallback="_sc")
+uvsub_ext = config.get("file_extensions", "uvsub", fallback="_uvsub")
+
 file_line_catalogue = config["catalogues"]["line_catalogue"]
 if os.path.isfile(file_line_catalogue) == False:
     file_line_catalogue = str(files("noema_combine").joinpath(file_line_catalogue))
@@ -203,9 +207,9 @@ def get_uvt_window(
     """
     extension = ""
     if selfcal == True:
-        extension += "_sc"
+        extension += selfcal_ext
     if uvsub == True:
-        extension += "_contsub"
+        extension += uvsub_ext
     uvt_filename = os.path.join(uvt_dir, Lid, f"{source_name}_{Lid}{extension}.uvt")
     return uvt_filename
 
