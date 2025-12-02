@@ -1,11 +1,7 @@
 import pytest
-from io import StringIO
-from typing import Dict
-from datetime import datetime
-from unittest.mock import patch, MagicMock, mock_open, call
-import os
+from unittest.mock import patch, MagicMock  # , mock_open, call
 import numpy as np
-import tempfile
+
 
 from noema_combine.data_handler import (
     get_line_param,
@@ -13,8 +9,8 @@ from noema_combine.data_handler import (
     get_uvt_window,
     get_uvt_file,
     get_30m_file,
-    line_prepare_merge,
-    line_reduce_30m,
+    # line_prepare_merge,
+    # line_reduce_30m,
     line_make_uvt,
 )
 
@@ -294,7 +290,11 @@ def test_get_30m_file_different_molecule():
 @patch("os.system")
 @patch("tempfile.NamedTemporaryFile")
 def test_line_make_uvt_default_parameters(
-    mock_temp, mock_os, mock_get_uvt_file, mock_get_uvt_window, mock_get_line
+    mock_temp: MagicMock,
+    mock_os: MagicMock,
+    mock_get_uvt_file: MagicMock,
+    mock_get_uvt_window: MagicMock,
+    mock_get_line: MagicMock,
 ):
     """Test line_make_uvt with default parameters"""
     mock_get_line.return_value = 0
@@ -332,11 +332,11 @@ def test_line_make_uvt_default_parameters(
 @patch("os.system")
 @patch("tempfile.NamedTemporaryFile")
 def test_line_make_uvt_with_custom_dv(
-    mock_temp,
-    mock_os,
-    mock_get_uvt_file,
-    mock_get_uvt_window,
-    mock_get_line,
+    mock_temp: MagicMock,
+    mock_os: MagicMock,
+    mock_get_uvt_file: MagicMock,
+    mock_get_uvt_window: MagicMock,
+    mock_get_line: MagicMock,
 ):
     """Test line_make_uvt with custom dv parameter"""
     mock_get_line.return_value = 0
@@ -377,11 +377,11 @@ def test_line_make_uvt_with_custom_dv(
 @patch("os.system")
 @patch("tempfile.NamedTemporaryFile")
 def test_line_make_uvt_with_dv_min_max(
-    mock_temp,
-    mock_os,
-    mock_get_uvt_file,
-    mock_get_uvt_window,
-    mock_get_line,
+    mock_temp: MagicMock,
+    mock_os: MagicMock,
+    mock_get_uvt_file: MagicMock,
+    mock_get_uvt_window: MagicMock,
+    mock_get_line: MagicMock,
 ):
     """Test line_make_uvt with dv_min and dv_max parameters"""
     mock_get_line.return_value = 0
@@ -421,11 +421,11 @@ def test_line_make_uvt_with_dv_min_max(
 @patch("os.system")
 @patch("tempfile.NamedTemporaryFile")
 def test_line_make_uvt_with_selfcal(
-    mock_temp,
-    mock_os,
-    mock_get_uvt_file,
-    mock_get_uvt_window,
-    mock_get_line,
+    mock_temp: MagicMock,
+    mock_os: MagicMock,
+    mock_get_uvt_file: MagicMock,
+    mock_get_uvt_window: MagicMock,
+    mock_get_line: MagicMock,
 ):
     """Test line_make_uvt with selfcal enabled"""
     mock_get_line.return_value = 0

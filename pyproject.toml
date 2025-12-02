@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "noema_combine"
 dependencies = ["numpy", "pyyaml", "astropy"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [{ name = "Jaime E. Pineda", email = "jpineda@mpe.mpg.de" }]
 maintainers = [{ name = "Jaime E. Pineda", email = "jpineda@mpe.mpg.de" }]
 description = "Package to be used for 30-m and NOEMA data processing and combination."
