@@ -186,6 +186,7 @@ def test_get_source_param_not_found():
 
 # Tests for get_uvt_window
 @patch("noema_combine.data_handler.uvt_dir", "/path/to/uvt")
+@patch("noema_combine.data_handler.uvsub_ext", "_uvsub")
 def test_get_uvt_window_default():
     """Test default uvt window filename generation"""
     result = get_uvt_window("B5", "L09")
@@ -200,10 +201,12 @@ def test_get_uvt_window_no_uvsub():
 
 
 @patch("noema_combine.data_handler.uvt_dir", "/path/to/uvt")
+@patch("noema_combine.data_handler.selfcal_ext", "_sc")
+@patch("noema_combine.data_handler.uvsub_ext", "_uvsub")
 def test_get_uvt_window_with_selfcal():
     """Test uvt window filename with selfcal"""
     result = get_uvt_window("B5", "L09", selfcal=True)
-    assert result == "/path/to/uvt/L09/B5_L09_uvsub_sc.uvt"
+    assert result == "/path/to/uvt/L09/B5_L09_sc_uvsub.uvt"
 
 
 @patch("noema_combine.data_handler.uvt_dir", "/path/to/uvt")
@@ -214,6 +217,7 @@ def test_get_uvt_window_no_uvsub_with_selfcal():
 
 
 @patch("noema_combine.data_handler.uvt_dir", "/data/uvt")
+@patch("noema_combine.data_handler.uvsub_ext", "_uvsub")
 def test_get_uvt_window_different_lid():
     """Test uvt window filename with different Lid"""
     result = get_uvt_window("NGC1333", "L11", uvsub=True, selfcal=False)
