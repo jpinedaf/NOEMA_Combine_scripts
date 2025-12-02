@@ -58,7 +58,7 @@ ignore_errors = true
 directory = "coverage_html_report"
 
 [project.urls]
-Homepage = "https://github.com/jpinedaf/NOEMA_Combine_scripts/"
+Homepage = "https://github.com/jpinedaf/NOEMA_combine/"
 
 [tool.black]
-target-version = ['py39']
+target-version = ['py313']
