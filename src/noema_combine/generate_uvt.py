@@ -1,4 +1,3 @@
-# Script to process a source and print/generate CLIC file info for MIOP uv-tables
 # import os
 from typing import TextIO, List, Dict, Any
 import yaml

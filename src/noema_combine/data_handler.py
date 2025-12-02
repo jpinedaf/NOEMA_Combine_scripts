@@ -6,8 +6,8 @@ import numpy as np
 from numpy.typing import NDArray
 import configparser
 from importlib.resources import files
-from astropy.coordinates import SkyCoord
-import astropy.units as u
+from astropy.coordinates import SkyCoord  # type: ignore
+import astropy.units as u  # type: ignore
 
 # from typing import Any
 
