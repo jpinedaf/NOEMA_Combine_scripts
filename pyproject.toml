@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "noema_combine"
-dependencies = ["numpy"]
+dependencies = ["numpy", "pyyaml", "astropy"]
 requires-python = ">=3.9"
 authors = [{ name = "Jaime E. Pineda", email = "jpineda@mpe.mpg.de" }]
 maintainers = [{ name = "Jaime E. Pineda", email = "jpineda@mpe.mpg.de" }]
