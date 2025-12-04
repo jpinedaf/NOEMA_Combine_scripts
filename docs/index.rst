@@ -23,13 +23,13 @@ Getting Started
 
      installation.rst
 
-.. Velocity gradient
-.. ^^^^^^^^^^^^^^^^^
+Configuration files
+^^^^^^^^^^^^^^^^^^^
 
-.. .. toctree::
-..      :maxdepth: 2
+.. toctree::
+     :maxdepth: 2
 
-..      vgrad.rst
+     configuration_files.rst
 
 .. Offsets and Sky rotation
 .. ^^^^^^^^^^^^^^^^^^^^^^^^
