@@ -6,17 +6,17 @@ from datetime import datetime
 
 def make_header(file: TextIO) -> None:
     header = datetime.today().strftime("%Y-%m-%d")
-    file.write(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
-    file.write(f"!\n")
-    file.write(f"!  Generate LR + HR chunk UVT files \n")
-    file.write(f"!\n")
-    file.write(f"!  Created for MIOP L19MB project\n")
+    file.write("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+    file.write("!\n")
+    file.write("!  Generate LR + HR chunk UVT files \n")
+    file.write("!\n")
+    file.write("!  Created for MIOP L19MB project\n")
     file.write(f"!  generate_miop_uvt, {header}\n")
-    file.write(f"!\n")
-    file.write(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
-    file.write(f"def integer new_file /global\n")
-    file.write(f"let new_file 1\n")
-    file.write(f"!\n")
+    file.write("!\n")
+    file.write("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+    file.write("def integer new_file /global\n")
+    file.write("let new_file 1\n")
+    file.write("!\n")
     return
 
 
@@ -36,28 +36,28 @@ def print_makespw(file: TextIO, uvt_out: list[str], sources: list[str]) -> None:
     # check that sources contains exactly two elements and that they are strings
     if len(sources) != 2:
         raise ValueError("Sources list must contain exactly two elements.")
-    file.write(f"!\n")
+    file.write("!\n")
     file.write(f"! Make uv-tables for sources: {sources[0]} and {sources[1]}\n")
-    file.write(f"! ! &1 = output table name parameter\n")
-    file.write(f"!\n")
-    file.write(f"! This procedure makes either make a new uvt\n")
-    file.write(f"! or append to a uvt, depending on the value of new_file\n")
-    file.write(f"!\n")
+    file.write("! ! &1 = output table name parameter\n")
+    file.write("!\n")
+    file.write("! This procedure makes either make a new uvt\n")
+    file.write("! or append to a uvt, depending on the value of new_file\n")
+    file.write("!\n")
     # This procedure makes a new uvt
-    file.write(f"begin procedure makespw\n")
-    file.write(f"  if (new_file.eq.1) then\n")
+    file.write("begin procedure makespw\n")
+    file.write("  if (new_file.eq.1) then\n")
     file.write(f"    find /proc corr /sou {sources[0]}\n")
     file.write(f'    table "{uvt_out[0]}_&1" new\n')
     file.write(f"    find /proc corr /sou {sources[1]}\n")
     file.write(f'    table "{uvt_out[1]}_&1" new\n')
-    file.write(f"  else\n")
+    file.write("  else\n")
     file.write(f"    find /proc corr /sou {sources[0]}\n")
     file.write(f'    table "{uvt_out[0]}_&1"\n')
     file.write(f"    find /proc corr /sou {sources[1]}\n")
     file.write(f'    table "{uvt_out[1]}_&1"\n')
-    file.write(f"  endif\n")
-    file.write(f"end procedure makespw\n")
-    file.write(f"!\n")
+    file.write("  endif\n")
+    file.write("end procedure makespw\n")
+    file.write("!\n")
     return
 
 
@@ -69,31 +69,31 @@ def calibration_type(
     amp_cal: str,
     RF_cal: str,
 ) -> None:
-    file.write(f"!\n")
-    file.write(f"set default\n")
-    file.write(f"set scan 0 10000\n")
-    file.write(f"set offset 0 0\n")
+    file.write("!\n")
+    file.write("set default\n")
+    file.write("set scan 0 10000\n")
+    file.write("set offset 0 0\n")
     file.write(f"set receiver {receiver}\n")
-    file.write(f"set quality average\n")
-    file.write(f"set weight tsys on\n")
-    file.write(f"set weight calibration on\n")
+    file.write("set quality average\n")
+    file.write("set weight tsys on\n")
+    file.write("set weight calibration on\n")
     if phase_cal == "antenna":
-        file.write(f"set phase antenna atmospher internal relative\n")
+        file.write("set phase antenna atmospher internal relative\n")
     else:
         print("Phase calibration requested as baseline, but not available")
-        file.write(f"set phase antenna atmospher internal relative\n")
+        file.write("set phase antenna atmospher internal relative\n")
     if amp_cal == "antenna":
-        file.write(f"set amplitude antenna absolute jansky relative\n")
+        file.write("set amplitude antenna absolute jansky relative\n")
     else:
-        file.write(f"set amplitude baseline relative\n")
+        file.write("set amplitude baseline relative\n")
     if RF_cal == "antenna":
-        file.write(f"set rf_passband antenna spectrum file 1 on\n")
+        file.write("set rf_passband antenna spectrum file 1 on\n")
     else:
-        file.write(f"set rf_passband antenna spectrum file 1 on\n")
-        file.write(f"set rf baseline on\n")
-        file.write(f"set amplitude baseline relative\n")
-    file.write(f"set drop 0.00000001 0.00000001\n")
-    file.write(f"!\n")
+        file.write("set rf_passband antenna spectrum file 1 on\n")
+        file.write("set rf baseline on\n")
+        file.write("set amplitude baseline relative\n")
+    file.write("set drop 0.00000001 0.00000001\n")
+    file.write("!\n")
     file.write(f"file in {file_name}\n")
     return
 
@@ -105,47 +105,47 @@ def look_spw(file: TextIO, high_res_parameters: Dict[str, int]) -> None:
     UI_start = high_res_parameters.get("UI_start", 32)
     UO_start = high_res_parameters.get("UO_start", 40)
     sb = "lsb"
-    file.write(f"!\n")
-    file.write(f"begin procedure loopspw\n")
-    file.write(f"!  These define the chunks used to make each spw\n")
-    file.write(f"!\n")
-    file.write(f"!!!!!!!!! Wideband chunks\n")
-    file.write(f"!\n")
-    file.write(f"  set selection line lsb l001 and l005 \n")
-    file.write(f"  @ makespw lo\n")
-    file.write(f"  !\n")
-    file.write(f"  set selection line lsb l002 and l006 \n")
-    file.write(f"  @ makespw li\n")
-    file.write(f"  !\n")
-    file.write(f"  !\n")
-    file.write(f"  set selection line usb l003 and l007 \n")
-    file.write(f"  @ makespw ui\n")
-    file.write(f"  !\n")
-    file.write(f"  set selection line usb l004 and l008 \n")
-    file.write(f"  @ makespw uo\n")
-    file.write(f"  !\n")
-    file.write(f"  !!!!!!!!! LO chunks\n")
-    file.write(f"  !\n")
+    file.write("!\n")
+    file.write("begin procedure loopspw\n")
+    file.write("!  These define the chunks used to make each spw\n")
+    file.write("!\n")
+    file.write("!!!!!!!!! Wideband chunks\n")
+    file.write("!\n")
+    file.write("  set selection line lsb l001 and l005 \n")
+    file.write("  @ makespw lo\n")
+    file.write("  !\n")
+    file.write("  set selection line lsb l002 and l006 \n")
+    file.write("  @ makespw li\n")
+    file.write("  !\n")
+    file.write("  !\n")
+    file.write("  set selection line usb l003 and l007 \n")
+    file.write("  @ makespw ui\n")
+    file.write("  !\n")
+    file.write("  set selection line usb l004 and l008 \n")
+    file.write("  @ makespw uo\n")
+    file.write("  !\n")
+    file.write("  !!!!!!!!! LO chunks\n")
+    file.write("  !\n")
     for i in range(9, number_windows + 9 + 1):
         if i == LI_start:
-            file.write(f"  !\n")
-            file.write(f"  !!!!!!!!! LI chunks\n")
-            file.write(f"  !\n")
+            file.write("  !\n")
+            file.write("  !!!!!!!!! LI chunks\n")
+            file.write("  !\n")
         elif i == UI_start:
             sb = "usb"
-            file.write(f"  !\n")
-            file.write(f"  !!!!!!!!! UI chunks\n")
-            file.write(f"  !\n")
+            file.write("  !\n")
+            file.write("  !!!!!!!!! UI chunks\n")
+            file.write("  !\n")
         elif i == UO_start:
-            file.write(f"  !\n")
-            file.write(f"  !!!!!!!!! UO chunks\n")
-            file.write(f"  !\n")
+            file.write("  !\n")
+            file.write("  !!!!!!!!! UO chunks\n")
+            file.write("  !\n")
         file.write(
             f"  set selection line {sb} l{i:03} and l{i + number_windows + 1:03} \n"
         )
         file.write(f"  @ makespw l{i:03}l{i + number_windows + 1:03} \n")
-        file.write(f"  !\n")
-    file.write(f"end procedure loopspw\n")
+        file.write("  !\n")
+    file.write("end procedure loopspw\n")
     return
 
 
@@ -174,9 +174,9 @@ def prepare_config(
         RF_cal = entry.get("RF calibration type", "antenna")
 
         calibration_type(file_out, receiver, file_name, phase_cal, amp_cal, RF_cal)
-        file_out.write(f"@ loopspw\n")
+        file_out.write("@ loopspw\n")
         if i == 0:
-            file_out.write(f"!\n!reuse the previous file\nlet new_file 0\n!\n")
+            file_out.write("!\n!reuse the previous file\nlet new_file 0\n!\n")
         print(
             f"File: {file_name}, Phase Calibration: {phase_cal}, Amplitude Calibration: {amp_cal}, RF Calibration: {RF_cal}"
         )

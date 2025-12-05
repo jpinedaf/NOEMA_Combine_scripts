@@ -21,9 +21,9 @@ else:
     config.read(pack_file)
 
 file_source_catalogue = config["catalogues"]["source_catalogue"]
-if os.path.isfile(file_source_catalogue) == False:
+if not os.path.isfile(file_source_catalogue):
     file_source_catalogue = str(files("noema_combine").joinpath(file_source_catalogue))
-    if os.path.isfile(file_source_catalogue) == False:
+    if not os.path.isfile(file_source_catalogue):
         raise FileNotFoundError(
             f"File not found: {config['catalogues']['source_catalogue']}"
         )
@@ -33,9 +33,9 @@ selfcal_ext = config.get("file_extensions", "selfcal", fallback="_sc")
 uvsub_ext = config.get("file_extensions", "uvsub", fallback="_uvsub")
 
 file_line_catalogue = config["catalogues"]["line_catalogue"]
-if os.path.isfile(file_line_catalogue) == False:
+if not os.path.isfile(file_line_catalogue):
     file_line_catalogue = str(files("noema_combine").joinpath(file_line_catalogue))
-    if os.path.isfile(file_line_catalogue) == False:
+    if not os.path.isfile(file_line_catalogue):
         raise FileNotFoundError(
             f"File not found: {config['catalogues']['line_catalogue']}"
         )
@@ -206,9 +206,9 @@ def get_uvt_window(
         If True, the file will include '_sc' in the name.
     """
     extension = ""
-    if selfcal == True:
+    if selfcal:
         extension += selfcal_ext
-    if uvsub == True:
+    if uvsub:
         extension += uvsub_ext
     uvt_filename = os.path.join(uvt_dir, Lid, f"{source_name}_{Lid}{extension}.uvt")
     return uvt_filename
@@ -236,7 +236,7 @@ def get_uvt_file(
     merge: bool
         If True, the file will be saved in the merge folder, otherwise in the uvt folder.
     """
-    if merge == False:
+    if not merge:
         dir_out = uvt_dir
     else:
         dir_out = uvt_dir_out
@@ -312,27 +312,27 @@ def line_prepare_merge(source_name: str, line_i: str, qn_i: str) -> None:
     fb = tempfile.NamedTemporaryFile(delete=True, mode="w+", dir=".", suffix=".class")
     fb.write(f'file in "{file_30m}"\n')
     fb.write(f'file out "{merge_30m}"  single /overwrite\n')
-    fb.write(f"say [INFO] Removing old output file\n")
+    fb.write("say [INFO] Removing old output file\n")
     fb.write(f'say "[INFO] Making new output file: {merge_30m}"\n')
-    fb.write(f"find\n")
-    fb.write(f"set mode x auto\n")
-    fb.write(f"set unit v f\n")
-    fb.write(f"get zero\n")
-    fb.write(f"sic message class s-i\n")
-    fb.write(f"for i 1 to found\n")
-    fb.write(f"  get next\n")
+    fb.write("find\n")
+    fb.write("set mode x auto\n")
+    fb.write("set unit v f\n")
+    fb.write("get zero\n")
+    fb.write("sic message class s-i\n")
+    fb.write("for i 1 to found\n")
+    fb.write("  get next\n")
     fb.write(f"  modify linename {name_str[index]}\n")
     fb.write(f"  modify freq {freq_i}\n")
     fb.write(f"  modify source {source_out}\n")
-    fb.write(f"  modify Beam_Eff /Ruze\n")
-    fb.write(f"  write\n")
-    fb.write(f"next\n")
-    fb.write(f"sic message class s+i\n")
+    fb.write("  modify Beam_Eff /Ruze\n")
+    fb.write("  write\n")
+    fb.write("next\n")
+    fb.write("sic message class s+i\n")
     fb.write(f'file in "{merge_30m}"\n')
-    fb.write(f"find /all\n")
-    fb.write(f"if found.eq.0 exit\n")
+    fb.write("find /all\n")
+    fb.write("if found.eq.0 exit\n")
     fb.write(f'table "{merge_uvt[:-4]}" new /NOCHECK source /like "{file_uvt}"\n')
-    fb.write(f"exit\n")
+    fb.write("exit\n")
     fb.flush()
     merged_folder = os.path.dirname(merge_uvt)  # get path only
     if not os.path.exists(merged_folder):
@@ -393,7 +393,7 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
     os.system(f"rm {file_30m[:-4]}.*")
     fb = tempfile.NamedTemporaryFile(delete=True, mode="w+", dir=".", suffix=".class")
     fb.write(f"file out {file_30m}  single\n")
-    fb.write(f"say [INFO] Removing old output file\n")
+    fb.write("say [INFO] Removing old output file\n")
     fb.write(f'say "[INFO] Making new output file: {file_30m}"\n')
     ####
     # Loop through files - one file per date
@@ -408,42 +408,42 @@ def line_reduce_30m(source_name: str, line_i: str, qn_i: str) -> None:
         # Load file and det defaults
         fb.write(f'file in "{inputfile}"\n')
         fb.write(f"set source {source_find}\n")
-        fb.write(f"set offset 0 0\n")
-        fb.write(f"set angle sec\n")
-        fb.write(f"set match 500\n")
-        fb.write(f"set tele *\n")
-        fb.write(f"set line *\n")
+        fb.write("set offset 0 0\n")
+        fb.write("set angle sec\n")
+        fb.write("set match 500\n")
+        fb.write("set tele *\n")
+        fb.write("set line *\n")
         # Open and check file
         # only observations with reference frequency
         fb.write("find /frequency {0}\n".format(freq_i * freq_corr))
-        fb.write(f"set mode x auto\n")
-        fb.write(f"set unit v\n")
-        fb.write(f"get zero\n")
-        fb.write(f"sic message class s-i\n")
-        fb.write(f"for i 1 to found\n")
-        fb.write(f"  get next\n")
+        fb.write("set mode x auto\n")
+        fb.write("set unit v\n")
+        fb.write("get zero\n")
+        fb.write("sic message class s-i\n")
+        fb.write("for i 1 to found\n")
+        fb.write("  get next\n")
         fb.write(f"  modify linename {name_str[index]}\n")
         fb.write(f"  modify freq {freq_i}\n")
         fb.write(f"  modify source {source_out}\n")
         # RA and Dec centers are in hrs and degrees, respectively
         fb.write(f"  modify projection = {ra0/15.0} {dec0} =\n")
-        fb.write(f"  modify telescope 30M-MRT\n")
+        fb.write("  modify telescope 30M-MRT\n")
         fb.write(f"  extract {vel_ext} velocity\n")  # cut out spectra
         fb.write(f"  set window {vel_win}\n")  # define baseline window
-        fb.write(f"  base 1\n")  # first order baseline
-        fb.write(f"  write\n")
-        fb.write(f"next\n")
+        fb.write("  base 1\n")  # first order baseline
+        fb.write("  write\n")
+        fb.write("next\n")
         # ! Toggle back screen informational messages
-        fb.write(f"sic message class s+i\n")
+        fb.write("sic message class s+i\n")
     # Now process the whole dataset available
     # Regrid and output to fits file
     print(file_30m)
     fb.write(f"file in {file_30m}\n")
-    fb.write(f"find /all\n")
-    fb.write(f"if found.eq.0 exit\n")
+    fb.write("find /all\n")
+    fb.write("if found.eq.0 exit\n")
     fb.write(f"table {file_30m[:-4]} new /nocheck\n")
     fb.write(f"xy_map {file_30m[:-4]}\n")
-    fb.write(f"exit\n")
+    fb.write("exit\n")
     fb.flush()
     os.system(f"rm -f {file_30m}")
     os.system(f"class -nw @ {fb.name}")
@@ -510,13 +510,13 @@ def line_make_uvt(
     fb = tempfile.NamedTemporaryFile(delete=True, mode="w+", dir=".", suffix=".map")
     fb.write(f'modify "{window_uvt}" /frequency {name_str[index]} {freq_i}\n')
     fb.write(f'let name "{window_uvt[:-4]}"\n')
-    fb.write(f"let type uvt\n")
-    fb.write(f"go setup\n")
+    fb.write("let type uvt\n")
+    fb.write("go setup\n")
     fb.write(f"uv_extract /range {vel_win} velocity\n")
     fb.write(f'write uv "{file_uvt}" new\n')
-    fb.write(f"sic message mapping s-i\n")
-    fb.write(f"sic message mapping s+i\n")
-    fb.write(f"exit\n")
+    fb.write("sic message mapping s-i\n")
+    fb.write("sic message mapping s+i\n")
+    fb.write("exit\n")
     fb.flush()
     os.system(f"mapping -nw @ {fb.name}")
     fb.close()

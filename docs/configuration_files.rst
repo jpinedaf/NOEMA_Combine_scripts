@@ -99,7 +99,7 @@ make the cubes.
 
 
 Line and Source Catalogues
--------------------------
+--------------------------
 The line and source catalogues are essential components of the NOEMA_Combine package,
 providing necessary information for data processing and analysis.  
 
@@ -110,7 +110,7 @@ providing necessary information for data processing and analysis.
 
 
 Source Catalogue
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 The source catalogue is a YAML file that contains a list of sources and their properties.
 Each entry in the YAML file represents a different source, and 
