@@ -31,6 +31,13 @@ Configuration files
 
      configuration_files.rst
 
+Creating uvt tables
+^^^^^^^^^^^^^^^^^^^
+.. toctree::
+     :maxdepth: 2
+
+     generate_uvt.rst
+     
 .. Offsets and Sky rotation
 .. ^^^^^^^^^^^^^^^^^^^^^^^^
 .. .. toctree::

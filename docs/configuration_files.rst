@@ -152,7 +152,7 @@ The first line of the CSV file contains the column headers, and each subsequent 
 
 An example of a line catalogue entry in CSV format is shown below:
 
-.. code-block:: csv
+.. code-block:: text
 
     #name,QN(filename),freq(GHz),mol(plot),QN(plot),Aul(logs^-1),Eul(K),cat,NOEMAbb,unit,width(km/s),30msetup,30mbb,30mwidth(km/s),30mline(km/s)
     SO,5_5_4_4,215.22065300,SO,"5(5)-4(4)",-3.91491,44.10371,JPL,lo,l009l048,10.0,Setup1,LO,20,5.0
