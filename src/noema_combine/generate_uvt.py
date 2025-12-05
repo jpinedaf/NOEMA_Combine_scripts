@@ -199,9 +199,11 @@ def process_source(setup_name: str, config_path: str = "clic_config_MIOP.yaml") 
     high_res_parameters = config.get("highres_parameters", {})
     sources = setup.get("sources", [])
     Afiles = setup.get("A-files", [])
+    Bfiles = setup.get("B-files", [])
     Cfiles = setup.get("C-files", [])
     Dfiles = setup.get("D-files", [])
     do_Aconf = len(Afiles) > 0
+    do_Bconf = len(Bfiles) > 0
     do_Cconf = len(Cfiles) > 0
     do_Dconf = len(Dfiles) > 0
     #
@@ -215,6 +217,15 @@ def process_source(setup_name: str, config_path: str = "clic_config_MIOP.yaml") 
             receiver=receiver,
             hpb_dict=Afiles,
             config="A",
+            high_res_parameters=high_res_parameters,
+        )
+    if do_Bconf:
+        prepare_config(
+            setup_name=setup_name,
+            sources=sources,
+            receiver=receiver,
+            hpb_dict=Bfiles,
+            config="B",
             high_res_parameters=high_res_parameters,
         )
 
@@ -248,13 +259,33 @@ def process_source(setup_name: str, config_path: str = "clic_config_MIOP.yaml") 
             high_res_parameters=high_res_parameters,
         )
 
-    if do_Cconf and do_Dconf and do_Aconf:
+    if do_Bconf and do_Cconf and do_Dconf:
+        prepare_config(
+            setup_name=setup_name,
+            sources=sources,
+            receiver=receiver,
+            hpb_dict=Bfiles + Cfiles + Dfiles,
+            config="BCD",
+            high_res_parameters=high_res_parameters,
+        )
+
+    if do_Aconf and do_Cconf and do_Dconf:
         prepare_config(
             setup_name=setup_name,
             sources=sources,
             receiver=receiver,
             hpb_dict=Cfiles + Dfiles + Afiles,
             config="ACD",
+            high_res_parameters=high_res_parameters,
+        )
+
+    if do_Aconf and do_Bconf and do_Cconf and do_Dconf:
+        prepare_config(
+            setup_name=setup_name,
+            sources=sources,
+            receiver=receiver,
+            hpb_dict=Afiles + Bfiles + Cfiles + Dfiles,
+            config="ABCD",
             high_res_parameters=high_res_parameters,
         )
 
