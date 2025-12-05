@@ -61,7 +61,6 @@ directory = "coverage_html_report"
 Homepage = "https://github.com/jpinedaf/NOEMA_combine/"
 
 [tool.ruff]
-# Exclude a variety of commonly ignored directories.
 exclude = [
   ".bzr",
   ".direnv",
@@ -85,11 +84,12 @@ exclude = [
   "_build",
   "buck-out",
   "build",
+  "backup",
   "dist",
   "node_modules",
   "site-packages",
   "venv",
-]
+] # Exclude a variety of commonly ignored directories.
 
 # Same as Black.
 line-length = 88
